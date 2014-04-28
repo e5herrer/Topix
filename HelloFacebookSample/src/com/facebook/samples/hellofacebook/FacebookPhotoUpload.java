@@ -123,6 +123,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
             }
         });
         
+        loginButton.performClick();
+        
         //camera on create
         
 	 

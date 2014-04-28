@@ -16,6 +16,7 @@
 -->
 
 <resources>
+
     <string name="app_name">HelloFacebookSample</string>
     <string name="cancelled">Cancelled</string>
     <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>
@@ -32,4 +33,8 @@
     <string name="pick_seattle_place">Pick a Seattle Place</string>
     <string name="app_id">355198514515820</string>
     <string name="exception">Exception: %1$s</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

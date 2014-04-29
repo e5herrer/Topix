@@ -55,7 +55,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
     private Button pickPlaceButton;
     private LoginButton loginButton;
     private ProfilePictureView profilePictureView;
-    private TextView greeting;
+    private TextView userName;
     private PendingAction pendingAction = PendingAction.NONE;
     private ViewGroup controlsContainer;
     private GraphUser user;
@@ -110,6 +110,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
         }
 
         setContentView(R.layout.main);
+        
+        /*
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
@@ -123,7 +125,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
             }
         });
         
-        loginButton.performClick();
+        */
+        //loginButton.performClick();
         
         //camera on create
         
@@ -144,7 +147,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 	    //
 
         profilePictureView = (ProfilePictureView) findViewById(R.id.profilePicture);
-        greeting = (TextView) findViewById(R.id.greeting);
+       // userName = (TextView) findViewById(R.id.userName);
 
         postStatusUpdateButton = (Button) findViewById(R.id.postStatusUpdateButton);
         postStatusUpdateButton.setOnClickListener(new View.OnClickListener() {
@@ -326,10 +329,10 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
-            greeting.setText(getString(R.string.hello_user, user.getFirstName()));
+            userName.setText(getString(R.string.hello_user, user.getFirstName()));
         } else {
             profilePictureView.setProfileId(null);
-            greeting.setText(null);
+            //userName.setText(null);
         }
     }
 

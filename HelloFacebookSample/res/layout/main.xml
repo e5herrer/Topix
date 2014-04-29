@@ -27,61 +27,43 @@
                   android:layout_height="fill_parent"
                   android:background="#FFF"
                   android:id="@+id/main_ui_container">
-        <com.facebook.widget.LoginButton
+
+        <TextView
+            android:id="@+id/greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#333"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <com.facebook.widget.ProfilePictureView
+                android:id="@+id/profilePicture"
+                android:layout_width="48dp"
+                android:layout_height="46dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                facebook:preset_size="normal" >
+            </com.facebook.widget.ProfilePictureView>
+
+            <com.facebook.widget.LoginButton
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 facebook:confirm_logout="false"
-                facebook:fetch_user_info="true"
-                />
+                facebook:fetch_user_info="true" />
+        </LinearLayout>
+
         <LinearLayout
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
-            <TextView
-                    android:id="@+id/greeting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_gravity="center"
-                    android:textColor="#333"
-                    android:textSize="18sp"/>
-            <com.facebook.widget.ProfilePictureView
-                    android:id="@+id/profilePicture"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    facebook:preset_size="normal"/>
-            <Button
-                    android:id="@+id/postStatusUpdateButton"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Post Status Update"
-                    />
-            <Button
-                    android:id="@+id/postPhotoButton"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Post Photo"
-                    />
-            <Button
-                    android:id="@+id/pickPlaceButton"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Pick Place"
-                    />
-            <Button
-	       	android:id="@+id/button_callcamera"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerHorizontal="true"
-	        android:layout_marginBottom="86dp"
-	        android:text="Take Photo" />
 
 	    <ImageView
 	        android:id="@+id/photo_image"
@@ -93,6 +75,37 @@
 	        android:contentDescription="will vary; image taken from camera" />
             
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/postStatusUpdateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="STATUS" />
+
+            <Button
+                android:id="@+id/postPhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PICPOST" />
+
+            <Button
+                android:id="@+id/pickPlaceButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DUMB" />
+
+            <Button
+                android:id="@+id/button_callcamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="86dp"
+                android:text="CAMERA" />
+        </LinearLayout>
+
     </LinearLayout>
     <FrameLayout
             android:id="@+id/fragment_container"

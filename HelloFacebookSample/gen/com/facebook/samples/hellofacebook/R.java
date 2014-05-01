@@ -243,18 +243,18 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f040018;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f040019;
         public static final int fragment_container=0x7f040005;
-        public static final int greeting=0x7f04001b;
+        public static final int greeting=0x7f04001d;
         public static final int large=0x7f040002;
-        public static final int login_button=0x7f04001d;
+        public static final int login_button=0x7f04001c;
         public static final int main_ui_container=0x7f040003;
         public static final int myLoginButton=0x7f040004;
         public static final int normal=0x7f040001;
         public static final int photo_image=0x7f04001e;
-        public static final int pickPlaceButton=0x7f040022;
+        public static final int pickPlaceButton=0x7f040021;
         public static final int picker_subtitle=0x7f040015;
-        public static final int postPhotoButton=0x7f040021;
-        public static final int postStatusUpdateButton=0x7f040020;
-        public static final int profilePicture=0x7f04001c;
+        public static final int postPhotoButton=0x7f040020;
+        public static final int postStatusUpdateButton=0x7f040022;
+        public static final int profilePicture=0x7f04001b;
         public static final int small=0x7f040000;
     }
     public static final class layout {

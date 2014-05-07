@@ -1,347 +1,133 @@
-
 package com.facebook.samples.hellofacebook;
 
-import android.app.AlertDialog;
+import com.facebook.samples.hellofacebook.TabsPagerAdapter;
+
+import com.facebook.samples.hellofacebook.R;
+
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
-import com.facebook.*;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphPlace;
-import com.facebook.model.GraphUser;
-import com.facebook.samples.hellofacebook.R;
-import com.facebook.widget.*;
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
-import java.util.*;
-import java.io.File;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.widget.ImageView;
-
-
-public class MainActivity extends FragmentActivity {
-
-    private static final String PERMISSION = "publish_actions";
-   
-    private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.uploadphoto:PendingAction";
-
-    
-    private LoginButton myLoginButton;
-    private PendingAction pendingAction = PendingAction.NONE;
-    private ViewGroup controlsContainer;
-    private GraphUser user;
-    private GraphPlace place;
-    private List<GraphUser> tags;
-    private boolean canPresentShareDialog;
-    private boolean canPresentShareDialogWithPhotos;
-
-    private enum PendingAction {
-        NONE,
-        POST_PHOTO,
-        POST_STATUS_UPDATE
-    }
-    
-    private UiLifecycleHelper uiHelper;
-
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-
-    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
-        @Override
-        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-            Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
-        }
-
-        @Override
-        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-            Log.d("HelloFacebook", "Success!");
-        }
-    };
-    
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        uiHelper = new UiLifecycleHelper(this, callback);
-        uiHelper.onCreate(savedInstanceState);
-        
-        Log.d("hello", "hi");
-
-        if (savedInstanceState != null) {
-            String name = savedInstanceState.getString(PENDING_ACTION_BUNDLE_KEY);
-            pendingAction = PendingAction.valueOf(name);
-        }
-
-       
-        
-        setContentView(R.layout.activity_main);
-
-        myLoginButton = (LoginButton) findViewById(R.id.login_button);
-
-        /*
-        myLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-        	@Override
-            public void onUserInfoFetched(GraphUser user) {
-        		if (user != null) {
-	                MainActivity.this.user = user;
-	                updateUI();
-	                // It's possible that we were waiting for this.user to be populated in order to post a
-	                // status update.
-	                handlePendingAction();
-        		}
-            }
-        });
-        */
-        
-        
-
-    }
-
-    
-    
-    
-    
-    
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-        uiHelper.onResume();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        uiHelper.onSaveInstanceState(outState);
-
-        outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	super.onActivityResult(requestCode, resultCode, data);
-
-        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
-            @Override
-            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-                Log.e("Activity", String.format("Error: %s", error.toString()));
-            }
-
-            @Override
-            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-                Log.i("Activity", "Success!");
-            }
-        });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        uiHelper.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        uiHelper.onDestroy();
-    }
-
-    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-        if (pendingAction != PendingAction.NONE &&
-                (exception instanceof FacebookOperationCanceledException ||
-                exception instanceof FacebookAuthorizationException)) {
-                new AlertDialog.Builder(MainActivity.this)
-                    .setTitle(R.string.cancelled)
-                    .setMessage(R.string.permission_not_granted)
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
-            pendingAction = PendingAction.NONE;
-        } else if (state == SessionState.OPENED_TOKEN_UPDATED) {
-            handlePendingAction();
-        }
-        
-        if (state.isOpened()) {
-            Intent i = new Intent(getApplicationContext(), FacebookPhotoUpload.class);
-            startActivity(i);
-        }
-        
-        updateUI();
-    }
-
-    private void updateUI() {
-        Session session = Session.getActiveSession();
-        boolean enableButtons = (session != null && session.isOpened());
-    }
-
-    @SuppressWarnings("incomplete-switch")
-    private void handlePendingAction() {
-        PendingAction previouslyPendingAction = pendingAction;
-        // These actions may re-set pendingAction if they are still pending, but we assume they
-        // will succeed.
-        pendingAction = PendingAction.NONE;
-
-        switch (previouslyPendingAction) {
-            case POST_PHOTO:
-                postPhoto();
-                break;
-            case POST_STATUS_UPDATE:
-                //postStatusUpdate();
-                break;
-        }
-    }
-
-    private interface GraphObjectWithId extends GraphObject {
-        String getId();
-    }
-
-    private void showPublishResult(String message, GraphObject result, FacebookRequestError error) {
-        String title = null;
-        String alertMessage = null;
-        if (error == null) {
-            title = getString(R.string.success);
-            String id = result.cast(GraphObjectWithId.class).getId();
-            alertMessage = getString(R.string.successfully_posted_post, message, id);
-        } else {
-            title = getString(R.string.error);
-            alertMessage = error.getErrorMessage();
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(alertMessage)
-                .setPositiveButton(R.string.ok, null)
-                .show();
-    }
-
-
-    private FacebookDialog.ShareDialogBuilder createShareDialogBuilderForLink() {
-        return new FacebookDialog.ShareDialogBuilder(this)
-                .setName("Hello Facebook")
-                .setDescription("The 'Hello Facebook' sample application showcases simple Facebook integration")
-                .setLink("http://developers.facebook.com/android");
-    }
-
-    private FacebookDialog.PhotoShareDialogBuilder createShareDialogBuilderForPhoto(Bitmap... photos) {
-        return new FacebookDialog.PhotoShareDialogBuilder(this)
-                .addPhotos(Arrays.asList(photos));
-    }
-    Bitmap image = null;
-    private void postPhoto() {
-       //BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
-        if (canPresentShareDialogWithPhotos) {
-            FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
-            uiHelper.trackPendingDialogCall(shareDialog.present());
-        } else if (hasPublishPermission()) {
-            Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), image, new Request.Callback() {
-                @Override
-                public void onCompleted(Response response) {
-                    showPublishResult(getString(R.string.photo_post), response.getGraphObject(), response.getError());
-                }
-            });
-            request.executeAsync();
-        } else {
-            pendingAction = PendingAction.POST_PHOTO;
-        }
-    }
-
-    private void showPickerFragment(PickerFragment<?> fragment) {
-        fragment.setOnErrorListener(new PickerFragment.OnErrorListener() {
-            @Override
-            public void onError(PickerFragment<?> pickerFragment, FacebookException error) {
-                String text = getString(R.string.exception, error.getMessage());
-                Toast toast = Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
-
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit();
-
-        controlsContainer.setVisibility(View.GONE);
-
-        // We want the fragment fully created so we can use it immediately.
-        fm.executePendingTransactions();
-
-        fragment.loadData(false);
-    }
-
-    
-
-
-
-    private void onPlacePickerDone(PlacePickerFragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack();
-
-        String result = "";
-
-        GraphPlace selection = fragment.getSelection();
-        if (selection != null) {
-            result = selection.getName();
-        } else {
-            result = getString(R.string.no_place_selected);
-        }
-
-        place = selection;
-
-        showAlert(getString(R.string.you_picked), result);
-    }
-
-    private void setPlacePickerListeners(final PlacePickerFragment fragment) {
-        fragment.setOnDoneButtonClickedListener(new PlacePickerFragment.OnDoneButtonClickedListener() {
-            @Override
-            public void onDoneButtonClicked(PickerFragment<?> pickerFragment) {
-                onPlacePickerDone(fragment);
-            }
-        });
-        fragment.setOnSelectionChangedListener(new PlacePickerFragment.OnSelectionChangedListener() {
-            @Override
-            public void onSelectionChanged(PickerFragment<?> pickerFragment) {
-                if (fragment.getSelection() != null) {
-                    onPlacePickerDone(fragment);
-                }
-            }
-        });
-    }
-
-    private void showAlert(String title, String message) {
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(R.string.ok, null)
-                .show();
-    }
-
-    private boolean hasPublishPermission() {
-        Session session = Session.getActiveSession();
-        return session != null && session.getPermissions().contains("publish_actions");
-    }
-
+	
+    private ViewPager viewPager;
+    private TabsPagerAdapter mAdapter;
+    private ActionBar actionBar;
+    private static String tag = "MainActivity";
+    // Tab titles
+    private String[] tabs = { "Profile", "Challenges", "Competitors", "Settings" };
+    private int y1, y2; //used to detect up and down swipes
  
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+    	Log.i(tag, "onCreate");
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Log.d("here1", "1");
+        // Initilization
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        actionBar = getActionBar();
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(mAdapter);
+        Log.d("here2", "2");
+        //actionBar.setGravity(Gravity.BOTTOM);
+        actionBar.setHomeButtonEnabled(false);
+        Log.d("here21", "21");
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);   
+        Log.d("here22", "22");
+        actionBar.setDisplayShowHomeEnabled(false);
+        Log.d("here23", "23");
+        actionBar.setDisplayShowTitleEnabled(false);
+        Log.d("here3", "3");
+        // Adding Tabs
+        for (String tab_name : tabs) {
+            /*actionBar.addTab(actionBar.newTab().setText(tab_name)
+                    .setTabListener(this));*/
+        	actionBar.addTab(actionBar.newTab().setIcon(getIcon(tab_name)).setTabListener(this));
+        }
+        Log.d("here4", "4");
+        /**
+         * on swiping the viewpager make respective tab selected
+         * */
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+ 
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+                actionBar.setSelectedNavigationItem(position);
+            }
+ 
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+ 
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+        
+        //if not logged in then promp them to login page
+        if(savedInstanceState == null){
+        	Log.d("here7", "7");
+        	Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+        	//i.putExtra("id", position);
+        	startActivity(i);
+        }
+        
+        //setting swipe gestures
+        
+        
+    }
+ 
+    private int getIcon(String tab_name) {
+    	Log.i(tag, "getIcon");
+
+		if(tab_name.equals("Profile")){
+			return R.drawable.id;
+//		} else if(tab_name.equals("Global")){
+//			return R.drawable.line_globe;
+//		} else if(tab_name.equals("Local")){
+//			return R.drawable.connections;
+		} else if(tab_name.equals("Competitors")){
+			return R.drawable.multi_agents;
+		}else if(tab_name.equals("Settings")){
+			return R.drawable.configuration;
+		}else {
+			return R.drawable.star;
+		}
+	}
+
+	@Override
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    }
+ 
+    @Override
+    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    	Log.i(tag, "onTabSelected");
+        // on tab selected
+        // show respected fragment view
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+ 
+    @Override
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    }
+
 }

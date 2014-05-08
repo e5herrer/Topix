@@ -8,19 +8,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.TextView;
  
 public class ChallengeFragment extends Fragment {
 	private static String tag = "ChallengeFragment";
+	private DBHelper db = new DBHelper(); 
+	public TextView challengeText;
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
  
         View rootView = inflater.inflate(R.layout.fragment_challenges, container, false);
+        
+        challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
+        
+        db.getLatestChallenge(challengeText);
  
         //initialize top photos
         GridView gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 

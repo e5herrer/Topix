@@ -77,6 +77,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
     private List<GraphUser> tags;
     private boolean canPresentShareDialog;
     private boolean canPresentShareDialogWithPhotos;
+    private DBHelper db = new DBHelper(); 
 
     private enum PendingAction {
         NONE,
@@ -342,13 +343,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
-            try {
-				greeting.setText(getString(R.string.hello_user, user.getFirstName() + " your username is "
-						+ user.getUsername() + "\n" + DBHelper.getLatestChallenge().get("challenge")));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				Log.d("shit", "shit"); 
-			}
+			db.getLatestChallenge(greeting); 
         } else {
             profilePictureView.setProfileId(null);
             greeting.setText(null);

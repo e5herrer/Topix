@@ -343,7 +343,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
-			db.getLatestChallenge(greeting); 
+			//db.getLatestChallenge(greeting); 
+            greeting.setText(user.getId());
         } else {
             profilePictureView.setProfileId(null);
             greeting.setText(null);

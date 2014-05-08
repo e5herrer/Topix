@@ -1,41 +1,55 @@
 
 package com.facebook.samples.hellofacebook;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.*;
+import com.facebook.AppEventsLogger;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
 import com.facebook.model.GraphUser;
-import com.facebook.samples.hellofacebook.R;
-import com.facebook.widget.*;
-
-import java.util.*;
-import java.io.File;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.widget.ImageView;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.LoginButton;
+import com.facebook.widget.PickerFragment;
+import com.facebook.widget.PlacePickerFragment;
+import com.facebook.widget.ProfilePictureView;
 
 
 public class FacebookPhotoUpload extends FragmentActivity {
@@ -63,6 +77,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
     private List<GraphUser> tags;
     private boolean canPresentShareDialog;
     private boolean canPresentShareDialogWithPhotos;
+    private DBHelper db = new DBHelper(); 
 
     private enum PendingAction {
         NONE,
@@ -110,6 +125,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
         }
 
         setContentView(R.layout.main);
+        
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
@@ -123,11 +139,12 @@ public class FacebookPhotoUpload extends FragmentActivity {
             }
         });
         
-        loginButton.performClick();
+        //loginButton.performClick();
         
         //camera on create
         
-	 
+        
+        
 	    photoImage = (ImageView) findViewById(R.id.photo_image);
 	        
 	    Button callCameraButton = (Button) findViewById(R.id.button_callcamera);
@@ -144,7 +161,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 	    //
 
         profilePictureView = (ProfilePictureView) findViewById(R.id.profilePicture);
-        greeting = (TextView) findViewById(R.id.greeting);
+       greeting = (TextView) findViewById(R.id.greeting);
 
         postStatusUpdateButton = (Button) findViewById(R.id.postStatusUpdateButton);
         postStatusUpdateButton.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +343,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
-            greeting.setText(getString(R.string.hello_user, user.getFirstName()));
+			//db.getLatestChallenge(greeting); 
+            greeting.setText(user.getId());
         } else {
             profilePictureView.setProfileId(null);
             greeting.setText(null);
@@ -537,4 +555,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
             handlePendingAction();
         }
     }
+    
+    
+    
+    
 }

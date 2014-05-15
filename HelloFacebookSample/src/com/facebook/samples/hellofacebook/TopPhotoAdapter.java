@@ -1,5 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
@@ -15,36 +17,21 @@ public class TopPhotoAdapter extends BaseAdapter {
 	DisplayMetrics dm = new DisplayMetrics();
 	
 	
-	private int [] gallery = {
-		R.drawable.number1,
-		R.drawable.dc2_hi,
-		R.drawable.three,
-		R.drawable.dc4_hi,
-		R.drawable.number_5_blue,
-		R.drawable.number1,
-		R.drawable.dc2_hi,
-		R.drawable.three,
-		R.drawable.dc4_hi,
-		R.drawable.number_5_blue,
-		R.drawable.number1,
-		R.drawable.dc2_hi,
-		R.drawable.three,
-		R.drawable.dc4_hi,
-		R.drawable.number_5_blue
-	};
+	private String topPhotos[];
 	
-	public TopPhotoAdapter(Context challengeFragment){
+	public TopPhotoAdapter(Context challengeFragment, String topPhotos[]){
 		this.context = challengeFragment;
+		this.topPhotos = topPhotos;
 	}
 	
 	@Override
 	public int getCount() {
-		return gallery.length;
+		return topPhotos.length;
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return gallery[position];
+		return topPhotos[position];
 	}
 
 	@Override
@@ -64,7 +51,13 @@ public class TopPhotoAdapter extends BaseAdapter {
 		} else {
 			iview = (ImageView) view;	
 		}
-		iview.setImageResource(gallery[position]);
+		//iview.setImageResource(gallery[position]);
+		Picasso.with(this.context) //
+        .load(this.topPhotos[position]) //
+        .placeholder(R.drawable.com_facebook_inverse_icon) //should replace
+        .error(R.drawable.com_facebook_inverse_icon) // should replace
+        .fit() 
+        .into(iview);
 		return iview;
 	}
 }

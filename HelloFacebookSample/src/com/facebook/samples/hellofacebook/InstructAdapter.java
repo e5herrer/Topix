@@ -1,5 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,25 +14,18 @@ import android.widget.RelativeLayout;
 
 public class InstructAdapter extends PagerAdapter {
 	Context context;
-	public int[] galImages;
+	public String[] gallery;
 	LayoutInflater inflater;
 
 	
 	InstructAdapter(Context context){
-		this.context=context;
+		this.context = context;
 		//initializing instruction images
-		this.galImages = new int[] {
-				R.drawable.number1,
-				R.drawable.dc2_hi,
-				R.drawable.three,
-				R.drawable.dc4_hi,
-				R.drawable.number_5_blue
-		};
 	}
 	
 	@Override
 		public int getCount() {
-		return galImages.length;
+		return this.gallery.length;
 	}
 	 
 	@Override
@@ -52,7 +47,14 @@ public class InstructAdapter extends PagerAdapter {
         instrucImg = (ImageView) itemView.findViewById(R.id.instruction);
         
         // Capture position and set to the ImageView
-        instrucImg.setImageResource(galImages[position]);
+        Picasso.with(this.context) //
+        .load(this.gallery[position]) //
+        .placeholder(R.drawable.com_facebook_inverse_icon) //should replace
+        .error(R.drawable.com_facebook_inverse_icon) // should replace
+        .fit() 
+        .into(instrucImg);
+
+        //instrucImg.setImageResource(this.gallery[position]);
         
         //adding the fragment into the container
 		((ViewPager) container).addView(itemView);

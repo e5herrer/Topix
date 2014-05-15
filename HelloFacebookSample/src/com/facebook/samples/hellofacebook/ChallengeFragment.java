@@ -17,6 +17,10 @@ public class ChallengeFragment extends Fragment {
 	private static String tag = "ChallengeFragment";
 	private DBHelper db = new DBHelper(); 
 	public TextView challengeText;
+	String topPhotos[] = {"https://lh6.googleusercontent.com/--frfTBfyba0/AAAAAAAAAAI/AAAAAAAACYc/GbV18P1SE3A/w48-c-h48/photo.jpg",
+			"http://cache.desktopnexus.com/thumbnails/308116-bigthumbnail.jpg",
+			"http://upload.wikimedia.org/wikipedia/commons/e/e9/Felis_silvestris_silvestris_small_gradual_decrease_of_quality.png"
+			}; //this is a temp replace this with the database url string array on the oncreate method.
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,7 +34,7 @@ public class ChallengeFragment extends Fragment {
  
         //initialize top photos
         GridView gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
-	    final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext()); //same need to call on rootview for context
+	    final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
 	    gridview.setAdapter(gridadapter);
 	    
 	    //setting gridview onclick controller
@@ -46,6 +50,7 @@ public class ChallengeFragment extends Fragment {
                 Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
                 // passing array index
                 intent.putExtra("id", position);
+                intent.putExtra("gallery", topPhotos);
                 startActivity(intent);
             }
         });

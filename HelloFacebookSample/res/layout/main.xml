@@ -47,9 +47,11 @@
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:layout_marginTop="5dp"
                 facebook:confirm_logout="false"
                 facebook:fetch_user_info="true" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -72,7 +74,9 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/button_callcamera"
                 android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
                 android:contentDescription="will vary; image taken from camera" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -84,25 +88,9 @@
                 android:id="@+id/postPhotoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PICPOST" />
-
-            <Button
-                android:id="@+id/button_callcamera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CAMERA" />
-
-            <Button
-                android:id="@+id/pickPlaceButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DUMB" />
-
-            <Button
-                android:id="@+id/postStatusUpdateButton"
-                android:layout_width="56dp"
-                android:layout_height="wrap_content"
-                android:text="STATUS" />
+                
+                android:text="Post to Facebook" />
+      
         </LinearLayout>
     </LinearLayout>
 

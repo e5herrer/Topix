@@ -1,4 +1,3 @@
-
 package com.facebook.samples.hellofacebook;
 
 import java.io.File;
@@ -64,9 +63,8 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
     private final String PENDING_ACTION_BUNDLE_KEY = "com.facebook.uploadphoto:PendingAction";
 
-    private Button postStatusUpdateButton;
+    
     private Button postPhotoButton;
-    private Button pickPlaceButton;
     private LoginButton loginButton;
     private ProfilePictureView profilePictureView;
     private TextView greeting;
@@ -111,7 +109,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 		
 	  Uri fileUri = null;
 	  ImageView photoImage = null;
-
+	  String fbph = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,6 +117,11 @@ public class FacebookPhotoUpload extends FragmentActivity {
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
 
+        
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String outlet= bundle.getString("photofb");
+        fbph = outlet;
         if (savedInstanceState != null) {
             String name = savedInstanceState.getString(PENDING_ACTION_BUNDLE_KEY);
             pendingAction = PendingAction.valueOf(name);
@@ -146,29 +149,14 @@ public class FacebookPhotoUpload extends FragmentActivity {
         
         
 	    photoImage = (ImageView) findViewById(R.id.photo_image);
+	    showPhoto(outlet);
 	        
-	    Button callCameraButton = (Button) findViewById(R.id.button_callcamera);
 	    
-	    callCameraButton.setOnClickListener(new View.OnClickListener() {
-	      public void onClick(View view) {
-	        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	        File file = getOutputPhotoFile();
-	        fileUri = Uri.fromFile(getOutputPhotoFile());
-	        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-	        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
-	      }
-	    });
-	    //
 
         profilePictureView = (ProfilePictureView) findViewById(R.id.profilePicture);
        greeting = (TextView) findViewById(R.id.greeting);
 
-        postStatusUpdateButton = (Button) findViewById(R.id.postStatusUpdateButton);
-        postStatusUpdateButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                onClickPostStatusUpdate();
-            }
-        });
+        
 
         postPhotoButton = (Button) findViewById(R.id.postPhotoButton);
         postPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -179,12 +167,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
         
 
-        pickPlaceButton = (Button) findViewById(R.id.pickPlaceButton);
-        pickPlaceButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                onClickPickPlace();
-            }
-        });
+       
 
         controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
 
@@ -194,9 +177,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
             // If we're being re-created and have a fragment, we need to a) hide the main UI controls and
             // b) hook up its listeners again.
             controlsContainer.setVisibility(View.GONE);
-            if (fragment instanceof PlacePickerFragment) {
-                setPlacePickerListeners((PlacePickerFragment) fragment);
-            }
+          
         }
 
         // Listen for changes in the back stack so we know if a fragment got popped off because the user
@@ -238,8 +219,9 @@ public class FacebookPhotoUpload extends FragmentActivity {
 	  
 	
 	  
-	  private void showPhoto(Uri photoUri) {
-		  String filePath = photoUri.getEncodedPath(); 
+	  private void showPhoto(String photoUri) {
+		  Log.d("IN SHOW PHOTO", fbph);
+		  String filePath = photoUri; 
 		  File imageFile = new File(filePath);
 		  if (imageFile.exists()){
 			 //((BitmapDrawable)photoImage.getDrawable()).getBitmap().recycle(); 
@@ -281,18 +263,18 @@ public class FacebookPhotoUpload extends FragmentActivity {
     
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
 		    if (resultCode == RESULT_OK) {
-		      Uri photoUri = null;
+		      //Uri photoUri = null;
 		      if (data == null) {
 		        // A known bug here! The image should have saved in fileUri
 		        Toast.makeText(this, "Image saved successfully", 
 		                       Toast.LENGTH_LONG).show();
-		        photoUri = fileUri;
+		        //photoUri = fileUri;
 		      } else {
-		        photoUri = data.getData();
+		        //photoUri = data.getData();
 		        Toast.makeText(this, "Image saved successfully in: " + data.getData(), 
 		                       Toast.LENGTH_LONG).show();
 		      }
-		      showPhoto(photoUri);
+		      //showPhoto(photoUri);
 		    } else if (resultCode == RESULT_CANCELED) {
 		      Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
 		    } else {
@@ -337,14 +319,12 @@ public class FacebookPhotoUpload extends FragmentActivity {
         Session session = Session.getActiveSession();
         boolean enableButtons = (session != null && session.isOpened());
 
-        postStatusUpdateButton.setEnabled(enableButtons || canPresentShareDialog);
         postPhotoButton.setEnabled(enableButtons || canPresentShareDialogWithPhotos);
-        pickPlaceButton.setEnabled(enableButtons);
 
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
 			//db.getLatestChallenge(greeting); 
-            greeting.setText(user.getId());
+            greeting.setText("Hello, " + user.getFirstName() + " \nConfirm photo to post");
         } else {
             profilePictureView.setProfileId(null);
             greeting.setText(null);
@@ -362,9 +342,6 @@ public class FacebookPhotoUpload extends FragmentActivity {
             case POST_PHOTO:
                 postPhoto();
                 break;
-            case POST_STATUS_UPDATE:
-                postStatusUpdate();
-                break;
         }
     }
 
@@ -379,6 +356,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
             title = getString(R.string.success);
             String id = result.cast(GraphObjectWithId.class).getId();
             alertMessage = getString(R.string.successfully_posted_post, message, id);
+            
         } else {
             title = getString(R.string.error);
             alertMessage = error.getErrorMessage();
@@ -402,25 +380,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
                 .setLink("http://developers.facebook.com/android");
     }
 
-    private void postStatusUpdate() {
-        if (canPresentShareDialog) {
-            FacebookDialog shareDialog = createShareDialogBuilderForLink().build();
-            uiHelper.trackPendingDialogCall(shareDialog.present());
-        } else if (user != null && hasPublishPermission()) {
-        	
-			final String message = getString(R.string.status_update, user.getFirstName(), "\n Posted by Topix on "+(new Date().toString()));
-            Request request = Request
-                    .newStatusUpdateRequest(Session.getActiveSession(), message, place, tags, new Request.Callback() {
-                        @Override
-                        public void onCompleted(Response response) {
-                            showPublishResult(message, response.getGraphObject(), response.getError());
-                        }
-                    });
-            request.executeAsync();
-        } else {
-            pendingAction = PendingAction.POST_STATUS_UPDATE;
-        }
-    }
+    
 
     private void onClickPostPhoto() {
         performPublish(PendingAction.POST_PHOTO, canPresentShareDialogWithPhotos);
@@ -441,6 +401,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
                 @Override
                 public void onCompleted(Response response) {
                     showPublishResult(getString(R.string.photo_post), response.getGraphObject(), response.getError());
+                    finish();
                 }
             });
             request.executeAsync();
@@ -477,50 +438,6 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
 
 
-    private void onPlacePickerDone(PlacePickerFragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack();
-
-        String result = "";
-
-        GraphPlace selection = fragment.getSelection();
-        if (selection != null) {
-            result = selection.getName();
-        } else {
-            result = getString(R.string.no_place_selected);
-        }
-
-        place = selection;
-
-        showAlert(getString(R.string.you_picked), result);
-    }
-
-    private void onClickPickPlace() {
-        final PlacePickerFragment fragment = new PlacePickerFragment();
-        fragment.setLocation(SF_LOCATION);
-        fragment.setTitleText(getString(R.string.pick_seattle_place));
-
-        setPlacePickerListeners(fragment);
-
-        showPickerFragment(fragment);
-    }
-
-    private void setPlacePickerListeners(final PlacePickerFragment fragment) {
-        fragment.setOnDoneButtonClickedListener(new PlacePickerFragment.OnDoneButtonClickedListener() {
-            @Override
-            public void onDoneButtonClicked(PickerFragment<?> pickerFragment) {
-                onPlacePickerDone(fragment);
-            }
-        });
-        fragment.setOnSelectionChangedListener(new PlacePickerFragment.OnSelectionChangedListener() {
-            @Override
-            public void onSelectionChanged(PickerFragment<?> pickerFragment) {
-                if (fragment.getSelection() != null) {
-                    onPlacePickerDone(fragment);
-                }
-            }
-        });
-    }
 
     private void showAlert(String title, String message) {
         new AlertDialog.Builder(this)
@@ -560,3 +477,4 @@ public class FacebookPhotoUpload extends FragmentActivity {
     
     
 }
+

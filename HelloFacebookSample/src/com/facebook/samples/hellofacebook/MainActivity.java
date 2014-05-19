@@ -31,7 +31,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBar actionBar;
     private static String tag = "MainActivity";
     // Tab titles
-    private String[] tabs = { "Profile", "Challenges", "Competitors", "Settings" };
+    private String[] tabs = { "Profile", "Challenges", "Local", "Competitors", "Settings" };
     private int y1, y2; //used to detect up and down swipes
  
     @Override
@@ -101,10 +101,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		if(tab_name.equals("Profile")){
 			return R.drawable.id;
-//		} else if(tab_name.equals("Global")){
-//			return R.drawable.line_globe;
-//		} else if(tab_name.equals("Local")){
-//			return R.drawable.connections;
+		} else if(tab_name.equals("Challenges")){
+			return R.drawable.line_globe;
+		} else if(tab_name.equals("Local")){
+			return R.drawable.connections;
 		} else if(tab_name.equals("Competitors")){
 			return R.drawable.multi_agents;
 		}else if(tab_name.equals("Settings")){

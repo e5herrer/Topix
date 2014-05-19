@@ -1,20 +1,14 @@
 package com.facebook.samples.hellofacebook;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,14 +58,16 @@ public class ChallengeFragment extends Fragment {
         
         challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
         
-        db.getLatestChallenge(challengeText);
+        //db.getLatestChallenge(challengeText);
+        RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
+        latestChallengeTask.execute(DBHelper.latestChallengeURLString);
  
         //initialize top photos
         GridView gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
 	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
 	    //gridview.setAdapter(gridadapter);
-	     GetTopPhotosTask task = new GetTopPhotosTask(gridview);
-		 task.execute();
+	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview);
+	    getTopPhotosTask.execute();
 	    //setting gridview onclick controller
 	    /**
          * On Click event for Single Gridview Item
@@ -137,10 +132,13 @@ public class ChallengeFragment extends Fragment {
 		                    + timeStamp + ".jpg");
 		}
 	   String filepath = null;
-	  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		  super.onActivityResult(requestCode, resultCode, data);
 		  if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-		    if (resultCode == getActivity().RESULT_OK) {
+		    ;
+			getActivity();
+			if (resultCode == Activity.RESULT_OK) {
 		    	Uri photoUri = null;
 		      
 		      if (data == null) {
@@ -168,12 +166,16 @@ public class ChallengeFragment extends Fragment {
 		      }
 		      //showPhoto(photoUri);
 		      //pass photoUri to other class
-		    } else if (resultCode == getActivity().RESULT_CANCELED) {
-		      Toast.makeText(this.getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
 		    } else {
-		      Toast.makeText(this.getActivity(), "Callout for image capture failed!", 
-		                     Toast.LENGTH_LONG).show();
-		    }
+				;
+				getActivity();
+				if (resultCode == Activity.RESULT_CANCELED) {
+				  Toast.makeText(this.getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+				} else {
+				  Toast.makeText(this.getActivity(), "Callout for image capture failed!", 
+				                 Toast.LENGTH_LONG).show();
+				}
+			}
 		  }
 		  super.onActivityResult(requestCode, resultCode, data);
 		}
@@ -183,11 +185,10 @@ public class ChallengeFragment extends Fragment {
     //Needed to impliment this on fragments because a context switch out of main activity caused a crach
     //more info here https://code.google.com/p/android/issues/detail?id=19211
     @Override 
-    public void onSaveInstanceState(Bundle outState) 
-    {
-    //first saving my state, so the bundle wont be empty.
-    outState.putString("WORKAROUND_FOR_BUG_19917_KEY",  "WORKAROUND_FOR_BUG_19917_VALUE");
-    super.onSaveInstanceState(outState);
+    	public void onSaveInstanceState(Bundle outState) {
+    	//first saving my state, so the bundle wont be empty.
+    	outState.putString("WORKAROUND_FOR_BUG_19917_KEY",  "WORKAROUND_FOR_BUG_19917_VALUE");
+    	super.onSaveInstanceState(outState);
     }
     
     private class GetTopPhotosTask extends AsyncTask<String, String, String []> {
@@ -195,51 +196,42 @@ public class ChallengeFragment extends Fragment {
     	GetTopPhotosTask(GridView g) {
     		this.g = g;
     	}
-    	protected String [] doInBackground(String ...params) {
-    		String response = "";
-    		String [] retString;
-    		DefaultHttpClient client = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
-            try {
-              Log.d("check1", "check-a");
-              HttpResponse execute = client.execute(httpGet);
-              Log.d("check1", "check-b");
-              InputStream content = execute.getEntity().getContent();
-              Log.d("check1", "check-c");
-              BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-              String s = "";
-              while ((s = buffer.readLine()) != null) {
-                response += s;
-              }
-              
-              Log.d("check1", "check0");
-	          JSONObject jObj = new JSONObject(response);
-	          Log.d("check1", "check1"); 
-	          JSONArray jArr = jObj.getJSONArray("photos");
-	          retString = new String[jArr.length()];
-	          Log.d("check1", "check2a"); 
-	          
-
-           	  for(int i = 0; i < jArr.length(); i++) {
-                retString[i] = jArr.getJSONObject(i).getJSONObject("photo").getString("url"); // grabs URL from JSONObj
-           	  }
-
-           	  	   
-           	Log.d("check1", "check2b");
-           	  
-           	  return retString;
-
-            } catch (Exception e) {
-              e.printStackTrace();
-              Log.d("check1", "Exception caught in GetTopPhotosTask");
-            } 
-            return null;
+    	@Override
+		protected String [] doInBackground(String ...params) {
+    		return db.getTopPhotos(params); 
     	}
     	
-    	protected void onPostExecute(String [] result) {
+    	@Override
+		protected void onPostExecute(String [] result) {
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
 			g.setAdapter(gridadapter);
     	}
+    }
+    
+    
+    private class RenderChallengeTask extends AsyncTask<String, Void, String> {		
+		TextView t; 
+		private RenderChallengeTask(TextView v) {
+			t = v; 
+		}
+        @Override
+        protected String doInBackground(String... urls) {
+          return db.getLatestChallenge(urls);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+        	try {
+        	JSONObject j = new JSONObject(result); 
+        	JSONObject challenge = (JSONObject)j.get("challenge"); 
+        	t.setText("Title: " + challenge.get("title").toString() + "\n" +
+        			"Description " + challenge.get("description"));
+        	
+        	} catch (Exception e) {
+        		Log.d("DBHelper", "Problem generating JSONObject"); 
+        	}
+        	
+        }
     }
 }

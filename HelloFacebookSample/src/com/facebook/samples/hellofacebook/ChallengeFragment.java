@@ -1,16 +1,30 @@
 package com.facebook.samples.hellofacebook;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,9 +69,10 @@ public class ChallengeFragment extends Fragment {
  
         //initialize top photos
         GridView gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
-	    final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
-	    gridview.setAdapter(gridadapter);
-	    
+	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
+	    //gridview.setAdapter(gridadapter);
+	     GetTopPhotosTask task = new GetTopPhotosTask(gridview);
+		 task.execute();
 	    //setting gridview onclick controller
 	    /**
          * On Click event for Single Gridview Item
@@ -134,6 +149,16 @@ public class ChallengeFragment extends Fragment {
 		                       Toast.LENGTH_LONG).show();
 		        photoUri = fileUri;
 		        filepath = photoUri.getEncodedPath();
+		        //
+		        File imageFile = new File(filepath);
+		       
+		        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
+		        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+		        byte[] byteArray = byteArrayOutputStream .toByteArray();
+		        //encoded should be the string we use for sending to server
+		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+		      	//
 		        bu.setEnabled(true);
 		       
 		      } else {
@@ -164,5 +189,57 @@ public class ChallengeFragment extends Fragment {
     outState.putString("WORKAROUND_FOR_BUG_19917_KEY",  "WORKAROUND_FOR_BUG_19917_VALUE");
     super.onSaveInstanceState(outState);
     }
- 
+    
+    private class GetTopPhotosTask extends AsyncTask<String, String, String []> {
+    	GridView g;
+    	GetTopPhotosTask(GridView g) {
+    		this.g = g;
+    	}
+    	protected String [] doInBackground(String ...params) {
+    		String response = "";
+    		String [] retString;
+    		DefaultHttpClient client = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
+            try {
+              Log.d("check1", "check-a");
+              HttpResponse execute = client.execute(httpGet);
+              Log.d("check1", "check-b");
+              InputStream content = execute.getEntity().getContent();
+              Log.d("check1", "check-c");
+              BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+              String s = "";
+              while ((s = buffer.readLine()) != null) {
+                response += s;
+              }
+              
+              Log.d("check1", "check0");
+	          JSONObject jObj = new JSONObject(response);
+	          Log.d("check1", "check1"); 
+	          JSONArray jArr = jObj.getJSONArray("photos");
+	          retString = new String[jArr.length()];
+	          Log.d("check1", "check2a"); 
+	          
+
+           	  for(int i = 0; i < jArr.length(); i++) {
+                retString[i] = jArr.getJSONObject(i).getJSONObject("photo").getString("url"); // grabs URL from JSONObj
+           	  }
+
+           	  	   
+           	Log.d("check1", "check2b");
+           	  
+           	  return retString;
+
+            } catch (Exception e) {
+              e.printStackTrace();
+              Log.d("check1", "Exception caught in GetTopPhotosTask");
+            } 
+            return null;
+    	}
+    	
+    	protected void onPostExecute(String [] result) {
+    		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
+			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
+			g.setAdapter(gridadapter);
+    	}
+    }
 }

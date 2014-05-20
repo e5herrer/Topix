@@ -156,6 +156,8 @@ public class ChallengeFragment extends Fragment {
 		        byte[] byteArray = byteArrayOutputStream .toByteArray();
 		        //encoded should be the string we use for sending to server
 		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
+		        uploadPhotoTask.execute(encoded); 
 		      	//
 		        bu.setEnabled(true);
 		       
@@ -189,6 +191,16 @@ public class ChallengeFragment extends Fragment {
     	//first saving my state, so the bundle wont be empty.
     	outState.putString("WORKAROUND_FOR_BUG_19917_KEY",  "WORKAROUND_FOR_BUG_19917_VALUE");
     	super.onSaveInstanceState(outState);
+    }
+    
+    private class UploadPhotoTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			db.pushPhoto(params[0]);
+			return null;
+		}
+		
     }
     
     private class GetTopPhotosTask extends AsyncTask<String, String, String []> {

@@ -1,5 +1,6 @@
 package com.facebook.samples.hellofacebook;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -117,6 +118,16 @@ public class CompetitorFragment extends Fragment {
     		position = 0;
     	}
         this.imageSwitcher.setImageResource(imgs[position]);
+    }
+    
+    private class VoteTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			
+			return null;
+		}
+    	
     }
 
 }

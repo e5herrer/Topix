@@ -32,7 +32,7 @@ public class FullImageActivity extends Activity {
 
         Picasso.with(this) //
         	.load(this.topPhotos[position]) //
-        	.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
+        	//.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         	.error(R.drawable.com_facebook_inverse_icon) // should replace
         	.fit() 
         	.into(imageView);

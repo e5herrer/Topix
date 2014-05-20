@@ -53,8 +53,8 @@ public class TopPhotoAdapter extends BaseAdapter {
 		}
 		//iview.setImageResource(gallery[position]);
 		Picasso.with(this.context) //
-        .load(this.topPhotos[position]) //
-        .placeholder(R.drawable.com_facebook_inverse_icon) //should replace
+        .load(this.topPhotos[position]) // change to call to get photo URL
+        //.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         .error(R.drawable.com_facebook_inverse_icon) // should replace
         .fit() 
         .into(iview);

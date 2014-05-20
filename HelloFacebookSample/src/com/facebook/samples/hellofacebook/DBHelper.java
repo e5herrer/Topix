@@ -39,17 +39,31 @@ public class DBHelper {
         JSONObject json = new JSONObject(); 
         try {
             
-            json.put("image_content_type", "image/jpg");
-            json.put("image_file_name", "dummy_image");
-            json.put("image_data", encodedImage);
-            json.put("caption", " ");
+            JSONObject json2 = new JSONObject(); 
+            json2.put("image_content_type", "image/png");
+            json2.put("image_file_name", "dummy_image2.png");
+            json2.put("image_data", encodedImage);
+            json2.put("caption", " ");
+            json.put("photo", json2);
             StringEntity se = new StringEntity(json.toString());  
             se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             httpPost.setEntity(se);
             HttpResponse execute = client.execute(httpPost);
+            
+            Log.d("postPhoto", "Checkpoint 1");
 
-           if (execute == null) {
+            if (execute == null) {
             	Log.d("postPhoto", "response is null");
+            } else { 
+            	//parse HTTPrespose
+            	BufferedReader buffer = new BufferedReader(new InputStreamReader(
+            			execute.getEntity().getContent()));
+            	String s = "";
+            	String response = "";
+    			while ((s = buffer.readLine()) != null) {
+    				response += s;
+    			}
+            	Log.d("postPhoto",  response);
             }
             
         } catch (Exception e) {

@@ -72,19 +72,7 @@ public class ChallengeFragment extends Fragment {
 	    /**
          * On Click event for Single Gridview Item
          * */
-        gridview.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                    int position, long id) {
-        	    Log.i(tag, "onItemClick");
-                // Sending image id to FullScreenActivity
-                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
-                // passing array index
-                intent.putExtra("id", position);
-                intent.putExtra("gallery", topPhotos);
-                startActivity(intent);
-            }
-        });
+
         
         
         Button ib = (Button) rootView.findViewById(R.id.imageButton1);
@@ -108,7 +96,7 @@ public class ChallengeFragment extends Fragment {
             @Override
             public void onClick(View v) {
             	 Intent i = new Intent(getActivity(), FacebookPhotoUpload.class);
-            	i.putExtra("photofb", filepath);
+            	 i.putExtra("photofb", filepath);
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
             }
@@ -214,10 +202,24 @@ public class ChallengeFragment extends Fragment {
     	}
     	
     	@Override
-		protected void onPostExecute(String [] result) {
+		protected void onPostExecute(final String [] result) {
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
 			g.setAdapter(gridadapter);
+			
+	        g.setOnItemClickListener(new OnItemClickListener() {
+	            @Override
+	            public void onItemClick(AdapterView<?> parent, View v,
+	                    int position, long id) {
+	        	    Log.i(tag, "onItemClick");
+	                // Sending image id to FullScreenActivity
+	                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
+	                // passing array index
+	                intent.putExtra("id", position);
+	                intent.putExtra("gallery", result);
+	                startActivity(intent);
+	            }
+	        });
     	}
     }
     

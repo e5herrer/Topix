@@ -12,6 +12,9 @@ import java.util.Locale;
   
 
 
+
+import com.actionbarsherlock.app.SherlockFragment;
+
 import android.app.Activity;   
 import android.app.AlertDialog;   
 import android.content.ContentResolver;   
@@ -34,7 +37,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;   
 import android.widget.Toast;   
  
-public class LocalChallengeFragment extends Fragment implements OnClickListener {
+public class LocalChallengeFragment extends SherlockFragment implements OnClickListener {
 	
 	private LocationManager locationMangaer=null;   
 	 private LocationListener locationListener=null;    

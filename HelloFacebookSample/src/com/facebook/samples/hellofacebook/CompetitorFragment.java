@@ -1,5 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
+import com.actionbarsherlock.app.SherlockFragment;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +20,7 @@ import android.widget.ViewSwitcher.ViewFactory;
 import android.view.View.OnClickListener;
 
  
-public class CompetitorFragment extends Fragment {
+public class CompetitorFragment extends SherlockFragment {
 	private static String tag = "CompetitorFragment";
 	private static int MINSWIPE = 200;
 	private int position = 0;

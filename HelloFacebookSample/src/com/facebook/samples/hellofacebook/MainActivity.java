@@ -1,7 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.samples.hellofacebook.TabsPagerAdapter;
-
 import com.facebook.samples.hellofacebook.R;
 
 import android.app.ActionBar;
@@ -23,7 +23,7 @@ import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 
 	
     private ViewPager viewPager;
@@ -31,7 +31,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private ActionBar actionBar;
     private static String tag = "MainActivity";
     // Tab titles
-    private String[] tabs = { "Profile", "Challenges", "Local", "Competitors", "Settings" };
+    private String[] tabs = { "Profile", "Challenges", "Competitors", "Settings" };
     private int y1, y2; //used to detect up and down swipes
  
     @Override
@@ -99,17 +99,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private int getIcon(String tab_name) {
     	Log.i(tag, "getIcon");
 
-		if(tab_name.equals("Profile")){
+		if (tab_name.equals("Profile")){
 			return R.drawable.id;
-		} else if(tab_name.equals("Challenges")){
-			return R.drawable.line_globe;
-		} else if(tab_name.equals("Local")){
-			return R.drawable.connections;
-		} else if(tab_name.equals("Competitors")){
+		} else if (tab_name.equals("Challenges")){
+			return R.drawable.star;
+		} else if (tab_name.equals("Competitors")){
 			return R.drawable.multi_agents;
-		}else if(tab_name.equals("Settings")){
+		} else if (tab_name.equals("Settings")){
 			return R.drawable.configuration;
-		}else {
+		} else {
 			return R.drawable.star;
 		}
 	}

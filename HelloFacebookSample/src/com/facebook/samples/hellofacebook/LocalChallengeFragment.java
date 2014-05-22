@@ -176,6 +176,7 @@ public class LocalChallengeFragment extends Fragment implements OnClickListener 
 		            Log.v(TAG, latitude);   
 		            
 		             
+		            
 			    /*----------to get City-Name from coordinates ------------- */  
 			      String cityName=null;                 
 			      Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.getDefault());

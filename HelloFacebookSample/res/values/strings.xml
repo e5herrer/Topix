@@ -12,7 +12,7 @@
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
-    limitations under the License.
+    limitations under the License.
 -->
 
 <resources>
@@ -40,6 +40,7 @@
     <string name="ranklabel">"Rank : "</string>
     <string name="countrylabel">"Country : "</string>
     <string name="populationlabel">"Population : "</string>
-    
+    <string name="title_activity_new_challenge">NewChallenge</string>
+    <string name="title_activity_local_challenge_selected">LocalChallengeSelected</string>
 
 </resources>

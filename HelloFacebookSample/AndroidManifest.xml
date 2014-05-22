@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -20,26 +21,24 @@
             android:name="com.facebook.samples.hellofacebook.FacebookPhotoUpload"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize" >
-            
         </activity>
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-         
-         <activity android:name="com.facebook.samples.hellofacebook.FrontPageActivity"></activity>
-         
-       
-          <activity
+        <activity android:name="com.facebook.samples.hellofacebook.FrontPageActivity" >
+        </activity>
+        <activity
             android:name="com.facebook.samples.hellofacebook.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name="com.facebook.samples.hellofacebook.FullImageActivity"></activity>
+        <activity android:name="com.facebook.samples.hellofacebook.FullImageActivity" >
+        </activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -60,7 +59,12 @@
             android:name="com.facebook.samples.hellofacebook.LoginActivity"
             android:label="@string/title_activity_main"
             android:windowSoftInputMode="adjustResize" >
-            
+        </activity>
+        <activity android:name="com.facebook.samples.hellofacebook.NewChallenge" >
+        </activity>
+        <activity
+            android:name="com.facebook.samples.hellofacebook.LocalChallengeSelected"
+            android:label="@string/title_activity_local_challenge_selected" >
         </activity>
     </application>
 

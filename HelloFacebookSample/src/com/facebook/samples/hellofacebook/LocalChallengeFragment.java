@@ -174,6 +174,7 @@ public class LocalChallengeFragment extends Fragment implements OnClickListener 
 		            Log.v(TAG, longitude);   
 		            String latitude = "Latitude: " +loc.getLatitude();   
 		            Log.v(TAG, latitude);   
+		            
 		             
 			    /*----------to get City-Name from coordinates ------------- */  
 			      String cityName=null;                 

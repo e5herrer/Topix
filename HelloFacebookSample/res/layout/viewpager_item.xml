@@ -17,34 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/ranklabel" />
  
-    <TextView
-        android:id="@+id/countrylabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ranklabel"
-        android:text="@string/countrylabel" />
- 
-    <TextView
-        android:id="@+id/country"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rank"
-        android:layout_toRightOf="@+id/countrylabel" />
- 
-    <TextView
-        android:id="@+id/populationlabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/countrylabel"
-        android:text="@string/populationlabel" />
- 
-    <TextView
-        android:id="@+id/population"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/country"
-        android:layout_toRightOf="@+id/populationlabel" />
- 
     <ImageView
         android:id="@+id/flag"
         android:layout_width="wrap_content"

@@ -72,19 +72,7 @@ public class ChallengeFragment extends Fragment {
 	    /**
          * On Click event for Single Gridview Item
          * */
-        gridview.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                    int position, long id) {
-        	    Log.i(tag, "onItemClick");
-                // Sending image id to FullScreenActivity
-                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
-                // passing array index
-                intent.putExtra("id", position);
-                intent.putExtra("gallery", topPhotos);
-                startActivity(intent);
-            }
-        });
+
         
         
         Button ib = (Button) rootView.findViewById(R.id.imageButton1);
@@ -108,7 +96,7 @@ public class ChallengeFragment extends Fragment {
             @Override
             public void onClick(View v) {
             	 Intent i = new Intent(getActivity(), FacebookPhotoUpload.class);
-            	i.putExtra("photofb", filepath);
+            	 i.putExtra("photofb", filepath);
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
             }
@@ -203,21 +191,51 @@ public class ChallengeFragment extends Fragment {
 		
     }
     
-    private class GetTopPhotosTask extends AsyncTask<String, String, String []> {
+    private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
     	GridView g;
     	GetTopPhotosTask(GridView g) {
     		this.g = g;
     	}
     	@Override
-		protected String [] doInBackground(String ...params) {
+		protected TopixPhoto [] doInBackground(String ...params) {
     		return db.getTopPhotos(params); 
     	}
     	
     	@Override
-		protected void onPostExecute(String [] result) {
+		protected void onPostExecute(final TopixPhoto [] result) {
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
+			
 			g.setAdapter(gridadapter);
+			
+	        g.setOnItemClickListener(new OnItemClickListener() {
+	            @Override
+	            public void onItemClick(AdapterView<?> parent, View v,
+	                    int position, long id) {
+	        	    Log.i(tag, "onItemClick");
+	                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
+	                intent.putExtra("id", position);
+	                
+	                /*
+	                // stupid ugly workaround to intent nonsense, should fix
+	                String [] topPhotoURLs = new String[result.length]; 
+	                int [] topPhotoIDs = new int[result.length];
+	                
+	                for (int i = 0; i < result.length; i++) {
+	                	topPhotoURLs[i] = result[i].getURL();
+	                	topPhotoIDs[i] = result[i].getID();
+	                }
+	                
+	                //intent.putExtra("gallery", result);
+	                intent.putExtra("URLS", topPhotoURLs);
+	                intent.putExtra("IDS", topPhotoIDs); 
+	                */
+	                
+	                intent.putExtra("topPhotos", new TopixPhotoArrayWrapper(result));
+	                
+	                startActivity(intent);
+	            }
+	        });
     	}
     }
     
@@ -229,7 +247,7 @@ public class ChallengeFragment extends Fragment {
 		}
         @Override
         protected String doInBackground(String... urls) {
-          return db.getLatestChallenge(urls);
+        	return db.getLatestChallenge(urls);
         }
 
         @Override

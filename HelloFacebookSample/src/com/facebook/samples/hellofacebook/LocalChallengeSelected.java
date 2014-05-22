@@ -203,18 +203,18 @@ public class LocalChallengeSelected extends Activity {
 		
     }
     
-    private class GetTopPhotosTask extends AsyncTask<String, String, String []> {
+    private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
     	GridView g;
     	GetTopPhotosTask(GridView g) {
     		this.g = g;
     	}
     	@Override
-		protected String [] doInBackground(String ...params) {
+		protected TopixPhoto [] doInBackground(String ...params) {
     		return db.getTopPhotos(params); 
     	}
     	
     	@Override
-		protected void onPostExecute(String [] result) {
+		protected void onPostExecute(TopixPhoto [] result) {
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
 			g.setAdapter(gridadapter);

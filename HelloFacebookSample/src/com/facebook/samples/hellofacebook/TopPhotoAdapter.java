@@ -17,9 +17,9 @@ public class TopPhotoAdapter extends BaseAdapter {
 	DisplayMetrics dm = new DisplayMetrics();
 	
 	
-	private String topPhotos[];
+	private TopixPhoto topPhotos[];
 	
-	public TopPhotoAdapter(Context challengeFragment, String topPhotos[]){
+	public TopPhotoAdapter(Context challengeFragment, TopixPhoto topPhotos[]){
 		this.context = challengeFragment;
 		this.topPhotos = topPhotos;
 	}
@@ -53,7 +53,7 @@ public class TopPhotoAdapter extends BaseAdapter {
 		}
 		//iview.setImageResource(gallery[position]);
 		Picasso.with(this.context) //
-        .load(this.topPhotos[position]) // change to call to get photo URL
+        .load(this.topPhotos[position].getURL()) // change to call to get photo URL
         //.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         .error(R.drawable.com_facebook_inverse_icon) // should replace
         .fit() 

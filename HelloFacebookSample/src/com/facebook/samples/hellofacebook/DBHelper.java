@@ -71,9 +71,10 @@ public class DBHelper {
         }
 	}
 
-	public String[] getTopPhotos(String... params) {
+	public TopixPhoto[] getTopPhotos(String... params) {
 		String response = "";
-		String[] retString;
+		TopixPhoto [] topPhotos;
+		String [] retString;
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
 		try {
@@ -93,17 +94,34 @@ public class DBHelper {
 			JSONObject jObj = new JSONObject(response);
 			Log.d("check1", "check1");
 			JSONArray jArr = jObj.getJSONArray("photos");
+			topPhotos = new TopixPhoto[jArr.length()];
 			retString = new String[jArr.length()];
 			Log.d("check1", "check2a");
 
 			for (int i = 0; i < jArr.length(); i++) {
+				/*
 				retString[i] = jArr.getJSONObject(i).getJSONObject("photo")
 						.getString("url"); // grabs URL from JSONObj
+				*/
+				
+				int photoID = jArr.getJSONObject(i).getJSONObject("photo")
+						.getInt("id"); 
+				
+				String photoURL = jArr.getJSONObject(i).getJSONObject("photo")
+						.getString("url");
+				
+				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
+				
 			}
+			
+			/*// wtf why doesnt this work
+			for(int i = 0; i < jArr.length(); i++) {
+				topPhotos[i].setURL(retString[i]);
+			}*/
 
 			Log.d("check1", "check2b");
 
-			return retString;
+			return topPhotos;
 
 		} catch (Exception e) {
 			e.printStackTrace();

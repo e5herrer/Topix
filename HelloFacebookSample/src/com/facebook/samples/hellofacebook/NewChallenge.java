@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -52,18 +55,53 @@ public class NewChallenge extends ListActivity
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         
     
+        //
         
-        
-        /** Defining a click event listener for the button "Add" */
         OnClickListener listener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText edit = (EditText) findViewById(R.id.txtItem);
-                list.add(edit.getText().toString());
-                edit.setText("");
-                adapter.notifyDataSetChanged();
+		        AlertDialog.Builder alert = new AlertDialog.Builder(NewChallenge.this);
+		
+		        alert.setTitle("Title");
+		        alert.setMessage("Message");
+		
+		        // Set an EditText view to get user input 
+		        final EditText input = new EditText(NewChallenge.this);
+		        alert.setView(input);
+		
+		        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int whichButton) {
+		          Editable value = input.getText();
+		          String finalvalue = value.toString();
+		          list.add(finalvalue);
+		          adapter.notifyDataSetChanged();
+		          
+		          // Do something with value!
+		          }
+		        });
+		
+		        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		          public void onClick(DialogInterface dialog, int whichButton) {
+		            // Canceled.
+		          }
+		        });
+		
+		        alert.show();
             }
         };
+        //
+        
+        
+        /** Defining a click event listener for the button "Add" */
+        //OnClickListener listener1 = new OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        EditText edit = (EditText) findViewById(R.id.txtItem);
+        //        list.add(edit.getText().toString());
+        //        edit.setText("");
+        //        adapter.notifyDataSetChanged();
+        //    }
+        //};
  
         /** Setting the event listener for the add button */
         btn.setOnClickListener(listener);

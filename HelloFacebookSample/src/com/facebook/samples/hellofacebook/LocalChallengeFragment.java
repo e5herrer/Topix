@@ -171,51 +171,53 @@ public class LocalChallengeFragment extends SherlockFragment implements OnClickL
 		            editLocation.setText("");   
 		           
 		            Toast.makeText(getActivity().getBaseContext(),"Location changed : Lat: " +   
-		   loc.getLatitude()+ " Lng: " + loc.getLongitude(),   
-		   Toast.LENGTH_SHORT).show();   
+		            			loc.getLatitude()+ " Lng: " + loc.getLongitude(),   
+		            			Toast.LENGTH_SHORT).show();   
 		            String longitude = "Longitude: " +loc.getLongitude();     
-		      Log.v(TAG, longitude);   
-		      String latitude = "Latitude: " +loc.getLatitude();   
-		      Log.v(TAG, latitude);   
+		            Log.v(TAG, longitude);   
+		            String latitude = "Latitude: " +loc.getLatitude();   
+		            Log.v(TAG, latitude);   
+		            
 		             
-		    /*----------to get City-Name from coordinates ------------- */  
-		      String cityName=null;                 
-		      Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.getDefault());
-		      Log.d("here", "here1");
-		      List<Address>  addresses;  
-		      Log.d("here", "here2");
-		      try {     
-		      addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);    
-		      Log.d("here", "here3");
-		      if (addresses.size() > 0)      
-		         cityName=addresses.get(0).getLocality();     
-		        } catch (IOException e) {               
-		        e.printStackTrace();     
-		      }    
-		             
-		      String s = longitude+"\n"+latitude +   
-		   "\n\nMy Currrent City is: "+cityName;   
-		           editLocation.setText(s);   
-		        }
-
-				@Override
-				public void onStatusChanged(String provider, int status,
-						Bundle extras) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onProviderEnabled(String provider) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
-					
-				}   
+		            
+			    /*----------to get City-Name from coordinates ------------- */  
+			      String cityName=null;                 
+			      Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.getDefault());
+			      Log.d("here", "here1");
+			      List<Address>  addresses;  
+			      Log.d("here", "here2");
+			      try {     
+			      addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);    
+			      Log.d("here", "here3");
+			      if (addresses.size() > 0)      
+			         cityName=addresses.get(0).getLocality();     
+			        } catch (IOException e) {               
+			        e.printStackTrace();     
+			      }    
+			             
+			      String s = longitude+"\n"+latitude +   
+			   "\n\nMy Currrent City is: "+cityName;   
+			           editLocation.setText(s);   
+			        }
+	
+					@Override
+					public void onStatusChanged(String provider, int status,
+							Bundle extras) {
+						// TODO Auto-generated method stub
+						
+					}
+	
+					@Override
+					public void onProviderEnabled(String provider) {
+						// TODO Auto-generated method stub
+						
+					}
+	
+					@Override
+					public void onProviderDisabled(String provider) {
+						// TODO Auto-generated method stub
+						
+					}   
 		  
 		         
 		    }   

@@ -213,11 +213,21 @@ public class ChallengeFragment extends Fragment {
 	            public void onItemClick(AdapterView<?> parent, View v,
 	                    int position, long id) {
 	        	    Log.i(tag, "onItemClick");
-	                // Sending image id to FullScreenActivity
 	                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
-	                // passing array index
 	                intent.putExtra("id", position);
-	                intent.putExtra("gallery", result);
+	                
+	                // stupid ugly workaround to intent nonsense, should fix
+	                String [] topPhotoURLs = new String[result.length]; 
+	                int [] topPhotoIDs = new int[result.length];
+	                
+	                for (int i = 0; i < result.length; i++) {
+	                	topPhotoURLs[i] = result[i].getURL();
+	                	topPhotoIDs[i] = result[i].getID();
+	                }
+	                
+	                //intent.putExtra("gallery", result);
+	                intent.putExtra("URLS", topPhotoURLs);
+	                intent.putExtra("IDS", topPhotoIDs); 
 	                startActivity(intent);
 	            }
 	        });

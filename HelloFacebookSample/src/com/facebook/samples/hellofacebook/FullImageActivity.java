@@ -12,7 +12,9 @@ import android.widget.ImageView;
  
 public class FullImageActivity extends Activity {
 	private static String tag = "FullImageActivity";
-	private static String[] topPhotos;
+	private static TopixPhoto[] topPhotos;
+	private static String [] photoURLs;
+	private static int [] photoIDs; 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,11 +29,19 @@ public class FullImageActivity extends Activity {
  
         // Selected image id
         int position = i.getExtras().getInt("id");
-        topPhotos = i.getExtras().getStringArray("gallery");
+        //topPhotos = i.getExtras().getStringArray("gallery");
+        photoURLs = i.getExtras().getStringArray("URLS");
+        photoIDs = i.getExtras().getIntArray("IDS"); 
+        
+        topPhotos = new TopixPhoto[photoURLs.length]; 
+        
+        for (int q = 0; q < topPhotos.length; q++) {
+        	topPhotos[q] = new TopixPhoto(photoIDs[q], photoURLs[q]); 
+        }
         //InstructAdapter imageAdapter = new InstructAdapter(this, i.getExtras().getStringArray("gallery"));
 
         Picasso.with(this) //
-        	.load(this.topPhotos[position]) //
+        	.load(this.topPhotos[position].getURL()) //
         	//.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         	.error(R.drawable.com_facebook_inverse_icon) // should replace
         	.fit() 

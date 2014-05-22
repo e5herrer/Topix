@@ -30,6 +30,8 @@ public class FullImageActivity extends Activity {
         // Selected image id
         int position = i.getExtras().getInt("id");
         //topPhotos = i.getExtras().getStringArray("gallery");
+        
+        /*
         photoURLs = i.getExtras().getStringArray("URLS");
         photoIDs = i.getExtras().getIntArray("IDS"); 
         
@@ -38,6 +40,10 @@ public class FullImageActivity extends Activity {
         for (int q = 0; q < topPhotos.length; q++) {
         	topPhotos[q] = new TopixPhoto(photoIDs[q], photoURLs[q]); 
         }
+        */
+        
+        TopixPhotoArrayWrapper tpaw = (TopixPhotoArrayWrapper) getIntent().getSerializableExtra("topPhotos");
+        topPhotos = tpaw.getTopPhotos();
         //InstructAdapter imageAdapter = new InstructAdapter(this, i.getExtras().getStringArray("gallery"));
 
         Picasso.with(this) //

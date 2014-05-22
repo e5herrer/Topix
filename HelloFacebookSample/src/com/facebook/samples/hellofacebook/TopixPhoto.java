@@ -1,6 +1,8 @@
 package com.facebook.samples.hellofacebook;
 
-public class TopixPhoto {
+import java.io.Serializable;
+
+public class TopixPhoto implements Serializable {
 	
 	private int photoID;
 	String photoURL;

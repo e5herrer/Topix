@@ -2,6 +2,7 @@ package com.facebook.samples.hellofacebook;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.List;   
 import java.util.Locale;   
   
+
 
 
 
@@ -37,12 +39,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;   
 import android.widget.Toast;   
  
-public class LocalChallengeFragment extends SherlockFragment implements OnClickListener {
+public class LocalChallengeFragment extends SherlockFragment {
 	
 	private LocationManager locationMangaer=null;   
 	 private LocationListener locationListener=null;    
 	    
-	 private Button btnGetLocation = null;   
+	
 	 private EditText editLocation = null;
 	 Button newChallenge;
 	 
@@ -59,9 +61,7 @@ public class LocalChallengeFragment extends SherlockFragment implements OnClickL
            
         editLocation = (EditText) rootView.findViewById(R.id.editTextLocation);    
         
-        btnGetLocation = (Button) rootView.findViewById(R.id.btnLocation);   
-        
-        btnGetLocation.setOnClickListener(this);
+      
         
         newChallenge = (Button) rootView.findViewById(R.id.btnNewLocChallenge);
        
@@ -69,13 +69,54 @@ public class LocalChallengeFragment extends SherlockFragment implements OnClickL
 
            @Override
             public void onClick(View v) {
-            	 Intent i = new Intent(getActivity(), NewChallenge.class);
-                 startActivity(i);
+        	   AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+          		
+		        alert.setTitle("Title");
+		        alert.setMessage("Message");
+		
+		        // Set an EditText view to get user input 
+		        final EditText input = new EditText(getActivity());
+		        alert.setView(input);
+		
+		        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int whichButton) {
+		          Editable value = input.getText();
+		          String finalvalue = value.toString();
+		          //list.add(finalvalue);
+		          //adapter.notifyDataSetChanged();
+		          
+		          // Do something with value!
+		          }
+		        });
+		
+		        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		          public void onClick(DialogInterface dialog, int whichButton) {
+		            // Canceled.
+		          }
+		        });
+		
+		        alert.show();
             }
         });
            
         locationMangaer = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE); 
-        
+        flag = displayGpsStatus();   
+		if (flag) {   
+		      
+		   Log.v(TAG, "onClick");     
+			      
+		   editLocation.setText("Please!! move your device to"+   
+			   " see the changes in coordinates."+"\nWait..");   
+			      
+		   
+		   locationListener = new MyLocationListener();   
+			  
+		   locationMangaer.requestLocationUpdates(LocationManager   
+			   .GPS_PROVIDER, 5000, 10,locationListener);   
+		      
+		} else {   
+		   alertbox("Gps Status!!", "Your GPS is: OFF");   
+		}   
         //
         
         //
@@ -94,31 +135,6 @@ public class LocalChallengeFragment extends SherlockFragment implements OnClickL
     }
 
 
-	@Override
-	public void onClick(View v) {
-		flag = displayGpsStatus();   
-		if (flag) {   
-		      
-		   Log.v(TAG, "onClick");     
-			      
-		   editLocation.setText("Please!! move your device to"+   
-			   " see the changes in coordinates."+"\nWait..");   
-			      
-		   
-		   locationListener = new MyLocationListener();   
-			  
-		   locationMangaer.requestLocationUpdates(LocationManager   
-			   .GPS_PROVIDER, 5000, 10,locationListener);   
-		      
-		} else {   
-		   alertbox("Gps Status!!", "Your GPS is: OFF");   
-		}   
-
-		
-	}
-	
-	
-	
 	
 	//
 	private Boolean displayGpsStatus() {   

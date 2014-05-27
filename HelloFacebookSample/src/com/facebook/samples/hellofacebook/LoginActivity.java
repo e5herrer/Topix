@@ -97,7 +97,11 @@ public class LoginActivity extends FragmentActivity {
         setContentView(R.layout.activity_login);
 
         // Generate sample data
-        rank = new String[] { "1", "2", "3", "4", "5" };
+        rank = new String[] { "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+        					  "Nulla euismod placerat libero at fringilla.",
+        					  "Pellentesque porttitor lobortis tincidunt.",
+        					  "Phasellus at arcu id nulla porta feugiat cursus non nisi.",
+        					  "In commodo condimentum ante eget auctor." };
  
         flag = new int[] { R.drawable.china, R.drawable.india,
                 R.drawable.unitedstates, R.drawable.indonesia,

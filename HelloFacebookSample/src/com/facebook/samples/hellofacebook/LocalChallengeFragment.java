@@ -34,16 +34,17 @@ public class LocalChallengeFragment extends Fragment {
 	private LocationListener locationListener = null;
 	DBHelper db = new DBHelper();
 
-	private EditText editLocation = null;
+	//private EditText editLocation = null;
 	Button newChallenge;
-
-	String myLongitude;
-	String myLatitude;
+	Button getChallenges;
+		
+	EditText myLongitude;
+	EditText myLatitude;
 
 	private static final String TAG = "Debug";
 	private Boolean flag = false;
 	
-
+	ListView listView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,9 +55,12 @@ public class LocalChallengeFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_local, container,
 				false);
 
-		editLocation = (EditText) rootView.findViewById(R.id.editTextLocation);
+		//editLocation = (EditText) rootView.findViewById(R.id.myLat);
+		
+		myLongitude = (EditText) rootView.findViewById(R.id.myLong);
+		myLatitude = (EditText) rootView.findViewById(R.id.myLat);
 
-		ListView listView = (ListView) rootView
+		listView = (ListView) rootView
 				.findViewById(R.id.challengeList);
 
 		//new challenge button
@@ -95,6 +99,15 @@ public class LocalChallengeFragment extends Fragment {
 		        alert.show();
 			}
 		});
+		
+		getChallenges = (Button) rootView.findViewById(R.id.btnLocation);
+			
+		getChallenges.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
+				t.execute(myLongitude.getText().toString(), myLatitude.getText().toString());
+			}
+		}); 
 
 		Log.d("LocalChallengeFrag","Checkpoint 1");
 		
@@ -105,8 +118,8 @@ public class LocalChallengeFragment extends Fragment {
 
 			Log.v(TAG, "onClick");
 
-			editLocation.setText("Please!! move your device to"
-					+ " see the changes in coordinates." + "\nWait..");
+			//editLocation.setText("Please!! move your device to"
+					//+ " see the changes in coordinates." + "\nWait..");
 
 			locationListener = new MyLocationListener();
 
@@ -115,10 +128,10 @@ public class LocalChallengeFragment extends Fragment {
 			
 			Log.d("LocalChallengeFrag","Lat: " + myLatitude + " Long " + myLongitude);
 			
-			GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
+			//GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
 			
 			//t.execute(myLatitude, myLongitude);
-			t.execute("-117.2399", "32.88");
+			//t.execute("-117.2399", "32.88");
 
 		} else {
 			alertbox("Gps Status!!", "Your GPS is: OFF");
@@ -191,19 +204,20 @@ public class LocalChallengeFragment extends Fragment {
 		@Override
 		public void onLocationChanged(Location loc) {
 
-			editLocation.setText("");
+			//editLocation.setText("");
 
 			Toast.makeText(
 					getActivity().getBaseContext(),
 					"Location changed : Lat: " + loc.getLatitude() + " Lng: "
 							+ loc.getLongitude(), Toast.LENGTH_SHORT).show();
-			String longitude = "Longitude: " + loc.getLongitude();
+			
+			String longitude = "" + loc.getLongitude();
 			Log.v(TAG, longitude);
-			String latitude = "Latitude: " + loc.getLatitude();
+			String latitude = "" +  loc.getLatitude();
 			Log.v(TAG, latitude);
 
-			myLongitude = longitude;
-			myLatitude = latitude;
+			myLongitude.setText(longitude);
+			myLatitude.setText(latitude);
 
 			/*----------to get City-Name from coordinates ------------- */
 			String cityName = null;
@@ -222,9 +236,9 @@ public class LocalChallengeFragment extends Fragment {
 				e.printStackTrace();
 			}
 
-			String s = longitude + "\n" + latitude
-					+ "\n\nMy Currrent City is: " + cityName;
-			editLocation.setText(s);
+			//String s = longitude + "\n" + latitude
+			//		+ "\n\nMy Currrent City is: " + cityName;
+			//editLocation.setText(s);
 		}
 
 		@Override

@@ -2,7 +2,7 @@ package com.facebook.samples.hellofacebook;
 
 import com.facebook.samples.hellofacebook.ProfileFragment;
 import com.facebook.samples.hellofacebook.GlobalChallengeFragment;
-import com.facebook.samples.hellofacebook.CompetitorFragment;
+import com.facebook.samples.hellofacebook.GlobalCompetitorFragment;
 import com.facebook.samples.hellofacebook.SettingsFragment;
 
 import android.support.v4.app.Fragment;

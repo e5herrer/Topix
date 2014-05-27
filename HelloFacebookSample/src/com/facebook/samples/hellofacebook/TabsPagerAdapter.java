@@ -1,7 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
 import com.facebook.samples.hellofacebook.ProfileFragment;
-import com.facebook.samples.hellofacebook.ChallengeFragment;
+import com.facebook.samples.hellofacebook.GlobalChallengeFragment;
 import com.facebook.samples.hellofacebook.CompetitorFragment;
 import com.facebook.samples.hellofacebook.SettingsFragment;
 
@@ -22,10 +22,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter{
         case 1:
             return new ChallengeFragment();
         case 2:
-        	return new LocalChallengeFragment();
-        case 3:
         	return new CompetitorFragment();
-        case 4:
+        case 3:
             return new SettingsFragment();
         }
  
@@ -36,6 +34,6 @@ public class TabsPagerAdapter extends FragmentPagerAdapter{
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 5;
+        return 4;
     }
 }

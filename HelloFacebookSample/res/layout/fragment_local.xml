@@ -33,6 +33,13 @@
    android:layout_height="wrap_content"  
    android:text="New Challenge"  
    android:id="@+id/btnNewLocChallenge"></Button>  
- </LinearLayout>  
+ </LinearLayout>
+
+ <ListView
+     android:id="@+id/challengeList"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:layout_weight="0.13" >
+ </ListView>
  
 </LinearLayout>  

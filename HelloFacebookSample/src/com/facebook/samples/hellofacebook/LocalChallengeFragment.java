@@ -23,8 +23,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -55,8 +58,6 @@ public class LocalChallengeFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_local, container,
 				false);
 
-		//editLocation = (EditText) rootView.findViewById(R.id.myLat);
-		
 		myLongitude = (EditText) rootView.findViewById(R.id.myLong);
 		myLatitude = (EditText) rootView.findViewById(R.id.myLat);
 
@@ -71,22 +72,30 @@ public class LocalChallengeFragment extends Fragment {
 			public void onClick(View v) {
 				AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 				
-		        alert.setTitle("Title");
-		        alert.setMessage("Message");
+		        alert.setTitle("New Local Challenge!");
+		        alert.setMessage("Description");
 		
-		        // Set an EditText view to get user input 
-		        final EditText input = new EditText(getActivity());
-		        alert.setView(input);
+		        LinearLayout layout = new LinearLayout(getActivity());
+		        layout.setOrientation(LinearLayout.VERTICAL);
+
+		        final EditText titleBox = new EditText(getActivity());
+		        titleBox.setHint("Title");
+		        layout.addView(titleBox);
+
+		        final EditText descriptionBox = new EditText(getActivity());
+		        descriptionBox.setHint("Description");
+		        layout.addView(descriptionBox);
+
+		        alert.setView(layout);
 		
-		        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int whichButton) {
-		          Editable value = input.getText();
-		          //list.add(finalvalue);
-		          //adapter.notifyDataSetChanged();
-		          
-		          
-		          
-		          // Do something with value!
+		        	String titleContents = titleBox.getText().toString(); 
+		        	String dialogContents = descriptionBox.getText().toString();
+		        	
+		        	SubmitLocalChallengeTask submitLocal = new SubmitLocalChallengeTask();
+		        	submitLocal.execute(titleContents, dialogContents, myLongitude.getText().toString(), myLatitude.getText().toString()); 
+		          		
 		          }
 		        });
 		
@@ -138,11 +147,7 @@ public class LocalChallengeFragment extends Fragment {
 			Log.d("LocalChallengeFrag","GPS OFF");
 		}
 
-		//
-		
-		
 
-		//
 		return rootView;
 	}
 
@@ -260,6 +265,20 @@ public class LocalChallengeFragment extends Fragment {
 		}
 
 	}
+	
+	private class SubmitLocalChallengeTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			String title = params[0];
+			String desc = params[1];
+			String longitude = params[2];
+			String latitude = params[3]; 
+			return db.submitLocalChallenge(title, desc, longitude, latitude);
+		}
+		 
+		
+	}
 
 	private class GetLocalChallengeTask extends
 			AsyncTask<String, String, Challenge[]> {
@@ -275,15 +294,22 @@ public class LocalChallengeFragment extends Fragment {
 			return db.getLocalChallenges(params[0], params[1]);
 		}
 
-		protected void onPostExecute(Challenge[] challenges) {
+		protected void onPostExecute(final Challenge[] challenges) {
 			LocalChallengeAdapter adapter = new LocalChallengeAdapter(
 					getActivity().getBaseContext(),
 					R.layout.challenge_list_item_row, challenges);
 			
-			
 			listView.setAdapter(adapter);
+			
+			listView.setOnItemClickListener(new OnItemClickListener() { 
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						Intent i = new Intent(getActivity(), LocalChallengeSelected.class); 
+						i.putExtra("challenge", challenges[position]); 
+						startActivity(i); 
+					}
+			}); 
 		}
 	}
-
-	//
+			
 }

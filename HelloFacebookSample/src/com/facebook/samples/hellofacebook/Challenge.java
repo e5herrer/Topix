@@ -1,6 +1,8 @@
 package com.facebook.samples.hellofacebook;
 
-public class Challenge {
+import java.io.Serializable;
+
+public class Challenge implements Serializable{
 	
 	private int id;
 	private String title;

@@ -1,6 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.squareup.picasso.Picasso;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,39 +25,18 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 	private static String tag = "CompetitorFragment";
 	private static int MINSWIPE = 200;
 	private int position = 0;
-	private ImageSwitcher imageSwitcher = null;
-	private static int[] imgs = {
-		R.drawable.carla,
-		R.drawable.esequiel,
-		R.drawable.jon,
-		R.drawable.justin,
-		R.drawable.omar,
-		R.drawable.patrick
-	};
-	
+	private ImageView iview; 
 	private int y1, y2;
+	
+	DBHelper db = new DBHelper(); 
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
  
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
+        iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         
-      //initializing and binding image switcher used for voting
-        imageSwitcher = (ImageSwitcher)rootView.findViewById(R.id.voting_imageswitcher);
-        
-        imageSwitcher.setFactory(new ViewFactory() {
-            
-            public View makeView() {
-                // TODO Auto-generated method stub
-                
-                    // Create a new ImageView set it's properties 
-                    ImageView imageView = new ImageView(getActivity().getBaseContext());
-                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    //imageView.setLayoutParams(new ImageSwitcher.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
-                    return imageView;
-            }});
-        
-        imageSwitcher.setImageResource(R.drawable.voting_instructions);
+        displayRandomImage();
         
         rootView.setOnTouchListener( new OnTouchListener(){
 
@@ -104,22 +84,37 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     
     //handle upvotes
     public void upvote(){
+    	Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
     	Log.i(tag, "upvote");
-    	position++;
-    	if(position >= imgs.length){
-    		position = 0;
-    	}
-        this.imageSwitcher.setImageResource(imgs[position]);
+    	displayRandomImage();
     }
     
   //handle upvotes
-    public void downvote(){
+    public void downvote() {
+    	Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
+    	displayRandomImage();
     	Log.i(tag, "downvote");
-    	position++;
-    	if(position >= imgs.length){
-    		position = 0;
-    	}
-        this.imageSwitcher.setImageResource(imgs[position]);
+    }
+    
+    public void displayRandomImage() {
+    	RenderRandomImageTask ri = new RenderRandomImageTask();
+        ri.execute();
+    }
+    
+    private class RenderRandomImageTask extends AsyncTask<String, String, TopixPhoto> {
+
+		@Override
+		protected TopixPhoto doInBackground(String... params) {
+			Log.d("randomPhoto", "here");
+			return db.getRandomPhoto();
+		}
+		
+		@Override
+		protected void onPostExecute(TopixPhoto gotPhoto) {
+			Log.d("randomPhoto", gotPhoto.getURL());
+			Picasso.with(getActivity()).load(gotPhoto.getURL()).fit() .into(iview);
+		}
+    	
     }
     
     private class VoteTask extends AsyncTask<String, String, String> {

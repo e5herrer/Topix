@@ -28,6 +28,7 @@ public class DBHelper {
 	public final static String baseVoteURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos";
 	public final static String localChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/nearby/";
 	public final static String createLocalChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
+	public final static String randomImageFromChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos/random?fb_access_token=";
 	
 	
 	/*
@@ -295,6 +296,37 @@ public class DBHelper {
 			Log.d("check1", "Exception caught in GetTopPhotosTask");
 		}
 		return null;
+	}
+	
+	public TopixPhoto getRandomPhoto() {
+		TopixPhoto randomPhoto;
+		String response = "";
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
+		Log.d("randomPhoto", "PING URL: " + DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
+		try {
+			HttpResponse execute = client.execute(httpGet);
+			InputStream content = execute.getEntity().getContent();
+			 
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+			
+			String s = "";
+			while ((s = buffer.readLine()) != null) {
+				response += s;
+				Log.d("randomPhoto", s);
+			}
+			
+
+			JSONObject jObj = new JSONObject(response);
+			JSONObject jPhoto = jObj.getJSONObject("photo");
+			
+			return new TopixPhoto(jPhoto.getInt("challenge_id"), jPhoto.getString("image"));
+			
+		} catch (Exception e) {
+			Log.d("randomPhoto", "exception raised in random photo");
+		}
+			return null;
+
 	}
 
 	public TopixPhoto[] getLocalPhotos(Challenge c, String... params) {

@@ -276,8 +276,6 @@ public class LocalChallengeFragment extends Fragment {
 			String latitude = params[3]; 
 			return db.submitLocalChallenge(title, desc, longitude, latitude);
 		}
-		 
-		
 	}
 
 	private class GetLocalChallengeTask extends

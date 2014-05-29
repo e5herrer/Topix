@@ -109,6 +109,7 @@ public class LocalChallengeFragment extends Fragment {
 			}
 		});
 		
+		/*
 		getChallenges = (Button) rootView.findViewById(R.id.btnLocation);
 			
 		getChallenges.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +118,8 @@ public class LocalChallengeFragment extends Fragment {
 				t.execute(myLongitude.getText().toString(), myLatitude.getText().toString());
 			}
 		}); 
+		
+		*/
 
 		Log.d("LocalChallengeFrag","Checkpoint 1");
 		
@@ -210,6 +213,10 @@ public class LocalChallengeFragment extends Fragment {
 		public void onLocationChanged(Location loc) {
 
 			//editLocation.setText("");
+			
+			
+			GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
+			t.execute("" + loc.getLongitude(), "" + loc.getLatitude());
 
 			Toast.makeText(
 					getActivity().getBaseContext(),

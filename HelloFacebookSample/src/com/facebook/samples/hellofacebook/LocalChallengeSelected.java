@@ -42,7 +42,9 @@ public class LocalChallengeSelected extends Activity {
 
 	private static final String TAG = "CallCamera";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
-		
+	
+	Challenge myLocalChallenge;
+	
 	Uri fileUri = null;
 	ImageView photoImage = null;
 	
@@ -59,14 +61,20 @@ public class LocalChallengeSelected extends Activity {
         challengeText = (TextView)findViewById(R.id.challengeHolder_local);
         
         //db.getLatestChallenge(challengeText);
-        RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
-        latestChallengeTask.execute(DBHelper.latestChallengeURLString);
+        
+        Intent i = getIntent(); 
+        
+        myLocalChallenge = (Challenge) i.getSerializableExtra("challenge"); 
+        challengeText.setText(myLocalChallenge.getTitle() + myLocalChallenge.getDescription());
+        
+        //RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
+        //atestChallengeTask.execute(DBHelper.latestChallengeURLString);
  
         //initialize top photos
         GridView gridview = (GridView) findViewById(R.id.top_photos_gridview_local); //almost like original code but since its a fragment need to call on the rooview 
 	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
 	    //gridview.setAdapter(gridadapter);
-	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview);
+	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(myLocalChallenge, gridview);
 	    getTopPhotosTask.execute();
 	    //setting gridview onclick controller
 	    /**
@@ -156,7 +164,7 @@ public class LocalChallengeSelected extends Activity {
 		        byte[] byteArray = byteArrayOutputStream .toByteArray();
 		        //encoded should be the string we use for sending to server
 		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
+		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(myLocalChallenge);
 		        uploadPhotoTask.execute(encoded); 
 		      	//
 		        bu.setEnabled(true);
@@ -194,10 +202,16 @@ public class LocalChallengeSelected extends Activity {
     }
     
     private class UploadPhotoTask extends AsyncTask<String, String, String> {
+    	
+    	Challenge c; 
+    	
+    	public UploadPhotoTask(Challenge c) { 
+    		this.c = c; 
+    	}
 
 		@Override
 		protected String doInBackground(String... params) {
-			db.pushPhoto(params[0]);
+			db.pushLocalPhoto(c, params[0]);
 			return null;
 		}
 		
@@ -205,12 +219,14 @@ public class LocalChallengeSelected extends Activity {
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
     	GridView g;
-    	GetTopPhotosTask(GridView g) {
+    	Challenge c;
+    	GetTopPhotosTask(Challenge c, GridView g) {
     		this.g = g;
+    		this.c = c; 
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getTopPhotos(params); 
+    		return db.getLocalPhotos(c, params); 
     	}
     	
     	@Override
@@ -222,28 +238,4 @@ public class LocalChallengeSelected extends Activity {
     }
     
     
-    private class RenderChallengeTask extends AsyncTask<String, Void, String> {		
-		TextView t; 
-		private RenderChallengeTask(TextView v) {
-			t = v; 
-		}
-        @Override
-        protected String doInBackground(String... urls) {
-          return db.getLatestChallenge(urls);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-        	try {
-        	JSONObject j = new JSONObject(result); 
-        	JSONObject challenge = (JSONObject)j.get("challenge"); 
-        	t.setText("Title: " + challenge.get("title").toString() + "\n" +
-        			"Description " + challenge.get("description"));
-        	
-        	} catch (Exception e) {
-        		Log.d("DBHelper", "Problem generating JSONObject"); 
-        	}
-        	
-        }
-    }
 }

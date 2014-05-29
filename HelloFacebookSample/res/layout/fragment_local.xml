@@ -4,14 +4,24 @@
  android:orientation="vertical"  
  android:layout_width="fill_parent"  
  android:layout_height="fill_parent"  
- android:weightSum="1">  
+ android:weightSum="1">
+
+    <EditText
+        android:id="@+id/myLong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.13"
+        android:editable="false"
+        android:visibility="gone"
+        android:ems="10" />
 
  <EditText
-     android:id="@+id/editTextLocation"
+     android:id="@+id/myLat"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:layout_weight="0.13"
-     android:editable="false" >
+     android:editable="false"
+     android:visibility="gone" >
   
   <requestFocus></requestFocus>  
  </EditText>  
@@ -22,12 +32,7 @@
      android:layout_height="wrap_content"
      android:layout_weight="0.08"
      android:gravity="center" >
-  
-  <Button  
-   android:layout_width="wrap_content"  
-   android:layout_height="wrap_content"  
-   android:text="Get Location"  
-   android:id="@+id/btnLocation"></Button>  
+    
    <Button  
    android:layout_width="wrap_content"  
    android:layout_height="wrap_content"  

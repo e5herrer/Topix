@@ -86,7 +86,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        File file = getOutputPhotoFile();
     	        fileUri = Uri.fromFile(getOutputPhotoFile());
     	        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-    	        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
+    	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
          
@@ -96,7 +96,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
             @Override
             public void onClick(View v) {
-            	 Intent i = new Intent(getActivity(), FacebookPhotoUpload.class);
+            	 Intent i = new Intent(getActivity().getBaseContext(), FacebookPhotoUpload.class);
             	 i.putExtra("photofb", filepath);
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
@@ -123,9 +123,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	   String filepath = null;
 	  @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		  super.onActivityResult(requestCode, resultCode, data);
+
 		  if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-		    ;
+		    
 			getActivity();
 			if (resultCode == Activity.RESULT_OK) {
 		    	Uri photoUri = null;
@@ -169,6 +169,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 			}
 		  }
 		  super.onActivityResult(requestCode, resultCode, data);
+
 		}
     
     
@@ -204,6 +205,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	
     	@Override
 		protected void onPostExecute(final TopixPhoto [] result) {
+    		if(result == null){
+    			return;
+    		}
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
 			
@@ -253,6 +257,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
         @Override
         protected void onPostExecute(String result) {
+        	if(result == null){
+        		return;
+        	}
         	try {
         	JSONObject j = new JSONObject(result); 
         	JSONObject challenge = (JSONObject)j.get("challenge"); 
@@ -261,8 +268,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
         	
         	} catch (Exception e) {
         		Log.d("DBHelper", "Problem generating JSONObject"); 
-        	}
-        	
+        	}        	
         }
-    }
+    } 
+    
+    
 }

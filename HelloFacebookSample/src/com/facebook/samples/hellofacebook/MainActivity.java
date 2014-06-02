@@ -123,6 +123,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         // show respected fragment view
         viewPager.setCurrentItem(tab.getPosition());
     }
+    
+    @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
+	}
  
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {

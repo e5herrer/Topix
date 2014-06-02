@@ -2,6 +2,7 @@ package com.facebook.samples.hellofacebook;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
@@ -30,6 +31,11 @@ public class CompetitorFragment extends SherlockFragment {
                 LocalCompetitorFragment.class, null);
         return mTabHost;
     }
+    
+    @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
+	}
  
     @Override
     public void onDestroyView() {

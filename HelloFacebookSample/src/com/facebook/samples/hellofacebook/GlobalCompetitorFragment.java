@@ -32,7 +32,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
- 
+    	
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
         iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         
@@ -111,6 +111,9 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 		
 		@Override
 		protected void onPostExecute(TopixPhoto gotPhoto) {
+			if(gotPhoto == null){
+				return;
+			}
 			Log.d("randomPhoto", gotPhoto.getURL());
 			Picasso.with(getActivity()).load(gotPhoto.getURL()).fit() .into(iview);
 		}

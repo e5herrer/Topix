@@ -8,8 +8,6 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,7 +17,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +29,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragment;
  
 public class GlobalChallengeFragment extends SherlockFragment {
 	private static String tag = "ChallengeFragment";
@@ -54,7 +53,6 @@ public class GlobalChallengeFragment extends SherlockFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
- 
         View rootView = inflater.inflate(R.layout.fragment_global, container, false);
         
         challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
@@ -88,7 +86,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        File file = getOutputPhotoFile();
     	        fileUri = Uri.fromFile(getOutputPhotoFile());
     	        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-    	        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
+    	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
          
@@ -98,7 +96,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
             @Override
             public void onClick(View v) {
-            	 Intent i = new Intent(getActivity(), FacebookPhotoUpload.class);
+            	 Intent i = new Intent(getActivity().getBaseContext(), FacebookPhotoUpload.class);
             	 i.putExtra("photofb", filepath);
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
@@ -149,7 +147,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
 	        uploadPhotoTask.execute(encoded); 
-	      	//
+	      	
 	        bu.setEnabled(true);
 	       
 	      } else {
@@ -178,6 +176,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
 			  Toast.makeText(this.getActivity(), "Callout for image capture failed!", 
 			                 Toast.LENGTH_LONG).show();
 			}
+
+		  super.onActivityResult(requestCode, resultCode, data);
+
 		}
 	  }
 	  //super.onActivityResult(requestCode, resultCode, data);
@@ -203,6 +204,11 @@ public class GlobalChallengeFragment extends SherlockFragment {
 			return null;
 		}
 		
+		protected void onPostExecute(String result) {
+			GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, todaysChallenge);
+    	    getTopPhotosTask.execute();
+		}
+		
     }
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
@@ -219,6 +225,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	
     	@Override
 		protected void onPostExecute(final TopixPhoto [] result) {
+    		if(result == null){
+    			return;
+    		}
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
 			
@@ -253,7 +262,6 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
         @Override
         protected void onPostExecute(Challenge challenge) {
-        	
         	if(challenge != null) { 
 	        	t.setText("Title: " + challenge.getTitle() + "\n" +
 	        			"Description " + challenge.getDescription());
@@ -263,9 +271,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        	GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, challenge);
 	    	    getTopPhotosTask.execute();
         	}
-        	
-        	Log.d("latestChallenge", "on post exec");
-        	
+        		
         }
-    }
+    } 
+    
 }
+    

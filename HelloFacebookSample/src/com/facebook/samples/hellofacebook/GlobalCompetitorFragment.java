@@ -34,7 +34,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
- 
+    	
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
         iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         

@@ -28,6 +28,7 @@ public class DBHelper {
 	public final static String baseVoteURL = "http://vast-eyrie-9726.herokuapp.com/api/photos/";
 	public final static String localChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/nearby/";
 	public final static String createLocalChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
+	public final static String personalPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/users/me/photos/"; //need to append facebook token
 	public final static String randomImageFromChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos/random?fb_access_token=";
 	
 	
@@ -406,5 +407,62 @@ public class DBHelper {
 	
 		return null;
 	}
+
+	
+	public TopixPhoto[] getPersonalPhotos() {
+		String response = "";
+		TopixPhoto [] topPhotos;
+		String [] retString;
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
+		try {
+			HttpResponse execute = client.execute(httpGet);
+			InputStream content = execute.getEntity().getContent();
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(
+					content));
+			String s = "";
+			while ((s = buffer.readLine()) != null) {
+				response += s;
+			}
+
+			JSONObject jObj = new JSONObject(response);
+			JSONArray jArr = jObj.getJSONArray("photos");
+			topPhotos = new TopixPhoto[jArr.length()];
+			retString = new String[jArr.length()];
+
+			for (int i = 0; i < jArr.length(); i++) {				
+				int photoID = jArr.getJSONObject(i).getJSONObject("photo")
+						.getInt("id"); 
+				String photoURL = jArr.getJSONObject(i).getJSONObject("photo")
+						.getString("url");
+				
+
+				Log.d("getPersonalPhotos", "title");
+
+				String challengeTitle = jArr.getJSONObject(i).getJSONObject("photo")
+						.getJSONObject("challenge").getString("title");
+				
+				Log.d("getPersonalPhotos", "photo");
+
+				String challengeDesc = jArr.getJSONObject(i).getJSONObject("photo")
+						.getJSONObject("challenge").getString("description");
+				
+				Log.d("getPersonalPhotos", "likes");
+
+				
+				int upVotes = jArr.getJSONObject(i).getJSONObject("photo").getJSONObject("votes").getInt("likes"); 
+
+				
+				topPhotos[i] = new TopixPhoto(photoID, photoURL, challengeTitle, challengeDesc, upVotes); 
+			}
+
+			return topPhotos;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 }

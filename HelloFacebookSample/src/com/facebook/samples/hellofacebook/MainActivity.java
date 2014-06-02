@@ -33,7 +33,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     // Tab titles
     private String[] tabs = { "Profile", "Challenges", "Competitors", "Settings" };
     private int y1, y2; //used to detect up and down swipes
- 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	Log.i(tag, "onCreate");
@@ -123,6 +123,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         // show respected fragment view
         viewPager.setCurrentItem(tab.getPosition());
     }
+    
+    @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
+	}
  
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {

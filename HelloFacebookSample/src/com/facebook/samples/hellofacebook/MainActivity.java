@@ -35,6 +35,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private int y1, y2; //used to detect up and down swipes
  
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data); 
+    }
+    
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
     	Log.i(tag, "onCreate");
         super.onCreate(savedInstanceState);

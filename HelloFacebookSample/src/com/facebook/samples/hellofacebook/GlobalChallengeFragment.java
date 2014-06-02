@@ -37,19 +37,18 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	private static String tag = "ChallengeFragment";
 	private DBHelper db = new DBHelper(); 
 	public TextView challengeText;
-	String topPhotos[] = {"https://lh6.googleusercontent.com/--frfTBfyba0/AAAAAAAAAAI/AAAAAAAACYc/GbV18P1SE3A/w48-c-h48/photo.jpg",
-			"http://cache.desktopnexus.com/thumbnails/308116-bigthumbnail.jpg",
-			"http://upload.wikimedia.org/wikipedia/commons/e/e9/Felis_silvestris_silvestris_small_gradual_decrease_of_quality.png"
-			}; //this is a temp replace this with the database url string array on the oncreate method.
-
+	
 	private static final String TAG = "CallCamera";
-	private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 99;
+	GridView gridview;
 		
 	Uri fileUri = null;
 	ImageView photoImage = null;
 	
 	int enablebuttonselector = 0;
     Button bu;
+    
+    Challenge todaysChallenge; 
 	
 	
     @Override
@@ -62,14 +61,16 @@ public class GlobalChallengeFragment extends SherlockFragment {
         
         //db.getLatestChallenge(challengeText);
         RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
-        latestChallengeTask.execute(DBHelper.latestChallengeURLString);
+        latestChallengeTask.execute();
  
         //initialize top photos
-        GridView gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
+        gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
 	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
 	    //gridview.setAdapter(gridadapter);
-	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview);
-	    getTopPhotosTask.execute();
+        
+              
+	    //GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview);
+	    //getTopPhotosTask.execute();
 	    //setting gridview onclick controller
 	    /**
          * On Click event for Single Gridview Item
@@ -109,8 +110,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     
 
 	private File getOutputPhotoFile() {
-		  File directory = new File(Environment.getExternalStoragePublicDirectory(
-		                Environment.DIRECTORY_PICTURES), getActivity().getPackageName());
+		  File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getActivity().getPackageName());
 		  if (!directory.exists()) {
 		    if (!directory.mkdirs()) {
 		      Log.e(TAG, "Failed to create storage directory.");
@@ -118,60 +118,71 @@ public class GlobalChallengeFragment extends SherlockFragment {
 		    }
 		  }
 		  String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
-		  return new File(directory.getPath() + File.separator + "IMG_"  
-		                    + timeStamp + ".jpg");
+		  return new File(directory.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
 		}
-	   String filepath = null;
-	  @Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		  super.onActivityResult(requestCode, resultCode, data);
-		  if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-		    ;
-			getActivity();
-			if (resultCode == Activity.RESULT_OK) {
-		    	Uri photoUri = null;
-		      
-		      if (data == null) {
-		        // A known bug here! The image should have saved in fileUri
-		        Toast.makeText(this.getActivity(), "Image saved successfully", 
-		                       Toast.LENGTH_LONG).show();
-		        photoUri = fileUri;
-		        filepath = photoUri.getEncodedPath();
-		        //
-		        File imageFile = new File(filepath);
-		       
-		        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
-		        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-		        byte[] byteArray = byteArrayOutputStream .toByteArray();
-		        //encoded should be the string we use for sending to server
-		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
-		        uploadPhotoTask.execute(encoded); 
-		      	//
-		        bu.setEnabled(true);
-		       
-		      } else {
-		        photoUri = data.getData();
-		        Toast.makeText(this.getActivity(), "Image saved successfully in: " + data.getData(), 
-		                       Toast.LENGTH_LONG).show();
-		      }
-		      //showPhoto(photoUri);
-		      //pass photoUri to other class
-		    } else {
-				;
-				getActivity();
-				if (resultCode == Activity.RESULT_CANCELED) {
-				  Toast.makeText(this.getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
-				} else {
-				  Toast.makeText(this.getActivity(), "Callout for image capture failed!", 
-				                 Toast.LENGTH_LONG).show();
-				}
+	
+   String filepath = null;
+	   
+   @Override
+   public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	   super.onActivityResult(requestCode, resultCode, data);
+	   Toast.makeText(this.getActivity(), "On Activity Result", Toast.LENGTH_LONG).show();
+	  
+	  if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
+		//getActivity();
+		if (resultCode == Activity.RESULT_OK) {
+	    	Uri photoUri = null;
+	      
+	      if (data == null) {
+	        // A known bug here! The image should have saved in fileUri
+	        Toast.makeText(this.getActivity(), "Image saved successfully", Toast.LENGTH_LONG).show();
+	        photoUri = fileUri;
+	        filepath = photoUri.getEncodedPath();
+	        //
+	        File imageFile = new File(filepath);
+	       
+	        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
+	        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+	        byte[] byteArray = byteArrayOutputStream .toByteArray();
+	        //encoded should be the string we use for sending to server
+	        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
+	        uploadPhotoTask.execute(encoded); 
+	      	//
+	        bu.setEnabled(true);
+	       
+	      } else {
+	        photoUri = data.getData();
+	        Toast.makeText(this.getActivity(), "Image saved successfully in: " + data.getData(), 
+	                       Toast.LENGTH_LONG).show();
+	        filepath = photoUri.getEncodedPath();
+	        File imageFile = new File(filepath);
+	       
+	        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
+	        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+	        byte[] byteArray = byteArrayOutputStream .toByteArray();
+	        //encoded should be the string we use for sending to server
+	        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
+	        uploadPhotoTask.execute(encoded); 
+	      	//
+	        bu.setEnabled(true);
+	      }
+
+	    } else {
+			if (resultCode == Activity.RESULT_CANCELED) {
+			  Toast.makeText(this.getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+			} else {
+			  Toast.makeText(this.getActivity(), "Callout for image capture failed!", 
+			                 Toast.LENGTH_LONG).show();
 			}
-		  }
-		  super.onActivityResult(requestCode, resultCode, data);
 		}
-    
+	  }
+	  //super.onActivityResult(requestCode, resultCode, data);
+	}
+
     
     
     //Needed to impliment this on fragments because a context switch out of main activity caused a crach
@@ -187,7 +198,8 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
 		@Override
 		protected String doInBackground(String... params) {
-			db.pushPhoto(params[0]);
+			Log.d("GlobalChallengeFrag", "pushing photo to " + todaysChallenge.getDescription());
+			db.pushPhoto(todaysChallenge, params[0]);
 			return null;
 		}
 		
@@ -195,12 +207,14 @@ public class GlobalChallengeFragment extends SherlockFragment {
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
     	GridView g;
-    	GetTopPhotosTask(GridView g) {
+    	Challenge c;
+    	GetTopPhotosTask(GridView g, Challenge c) {
     		this.g = g;
+    		this.c = c;
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getTopPhotos(params); 
+    		return db.getTopPhotos(c, params); 
     	}
     	
     	@Override
@@ -217,22 +231,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        	    Log.i(tag, "onItemClick");
 	                Intent intent = new Intent(getActivity().getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
 	                intent.putExtra("id", position);
-	                
-	                /*
-	                // stupid ugly workaround to intent nonsense, should fix
-	                String [] topPhotoURLs = new String[result.length]; 
-	                int [] topPhotoIDs = new int[result.length];
-	                
-	                for (int i = 0; i < result.length; i++) {
-	                	topPhotoURLs[i] = result[i].getURL();
-	                	topPhotoIDs[i] = result[i].getID();
-	                }
-	                
-	                //intent.putExtra("gallery", result);
-	                intent.putExtra("URLS", topPhotoURLs);
-	                intent.putExtra("IDS", topPhotoIDs); 
-	                */
-	                
+
 	                intent.putExtra("topPhotos", new TopixPhotoArrayWrapper(result));
 	                
 	                startActivity(intent);
@@ -242,27 +241,30 @@ public class GlobalChallengeFragment extends SherlockFragment {
     }
     
     
-    private class RenderChallengeTask extends AsyncTask<String, Void, String> {		
+    private class RenderChallengeTask extends AsyncTask<String, Void, Challenge> {		
 		TextView t; 
 		private RenderChallengeTask(TextView v) {
 			t = v; 
 		}
         @Override
-        protected String doInBackground(String... urls) {
+        protected Challenge doInBackground(String... urls) {
         	return db.getLatestChallenge(urls);
         }
 
         @Override
-        protected void onPostExecute(String result) {
-        	try {
-        	JSONObject j = new JSONObject(result); 
-        	JSONObject challenge = (JSONObject)j.get("challenge"); 
-        	t.setText("Title: " + challenge.get("title").toString() + "\n" +
-        			"Description " + challenge.get("description"));
+        protected void onPostExecute(Challenge challenge) {
         	
-        	} catch (Exception e) {
-        		Log.d("DBHelper", "Problem generating JSONObject"); 
+        	if(challenge != null) { 
+	        	t.setText("Title: " + challenge.getTitle() + "\n" +
+	        			"Description " + challenge.getDescription());
+	        	
+	        	todaysChallenge = challenge; 
+	        	
+	        	GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, challenge);
+	    	    getTopPhotosTask.execute();
         	}
+        	
+        	Log.d("latestChallenge", "on post exec");
         	
         }
     }

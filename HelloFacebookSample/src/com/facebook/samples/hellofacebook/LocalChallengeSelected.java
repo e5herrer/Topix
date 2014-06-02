@@ -211,7 +211,7 @@ public class LocalChallengeSelected extends Activity {
 
 		@Override
 		protected String doInBackground(String... params) {
-			db.pushLocalPhoto(c, params[0]);
+			db.pushPhoto(c, params[0]);
 			return null;
 		}
 		

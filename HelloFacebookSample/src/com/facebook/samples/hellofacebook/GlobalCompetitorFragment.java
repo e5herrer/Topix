@@ -28,6 +28,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 	private ImageView iview; 
 	private int y1, y2;
 	
+	private int currentPhotoID; 
+	
 	DBHelper db = new DBHelper(); 
  
     @Override
@@ -85,6 +87,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     //handle upvotes
     public void upvote(){
     	Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
+    	VoteTask voteTask = new VoteTask(currentPhotoID); 
+    	voteTask.execute("up");
     	Log.i(tag, "upvote");
     	displayRandomImage();
     }
@@ -92,6 +96,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
   //handle upvotes
     public void downvote() {
     	Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
+    	VoteTask voteTask = new VoteTask(currentPhotoID); 
+    	voteTask.execute("down");
     	displayRandomImage();
     	Log.i(tag, "downvote");
     }
@@ -105,23 +111,33 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 
 		@Override
 		protected TopixPhoto doInBackground(String... params) {
-			Log.d("randomPhoto", "here");
 			return db.getRandomPhoto();
 		}
 		
 		@Override
 		protected void onPostExecute(TopixPhoto gotPhoto) {
-			Log.d("randomPhoto", gotPhoto.getURL());
-			Picasso.with(getActivity()).load(gotPhoto.getURL()).fit() .into(iview);
+			if (gotPhoto != null) { 
+				Log.d("randomPhoto", gotPhoto.getURL());
+				Picasso.with(getActivity()).load(gotPhoto.getURL()).fit() .into(iview);
+				currentPhotoID = gotPhoto.getID();
+			} else {
+				iview.setImageResource(R.drawable.voting_instructions);
+			}
 		}
     	
     }
     
     private class VoteTask extends AsyncTask<String, String, String> {
+    	
+    	int photoID;
+    	
+    	public VoteTask(int photoID){
+    		this.photoID = photoID; 
+    	}
 
 		@Override
 		protected String doInBackground(String... params) {
-			
+			db.pushVote(photoID, params[0]);
 			return null;
 		}
     	

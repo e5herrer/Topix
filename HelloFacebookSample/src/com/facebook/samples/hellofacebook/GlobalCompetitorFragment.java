@@ -36,7 +36,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
         iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         
-        displayRandomImage();
+//        displayRandomImage();
         
         rootView.setOnTouchListener( new OnTouchListener(){
 

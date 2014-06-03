@@ -44,7 +44,6 @@ public class GlobalCompetitorFragment extends SherlockFragment {
         GetTodaysChallengeTask gt = new GetTodaysChallengeTask();
         gt.execute(); 
        
-        
         rootView.setOnTouchListener( new OnTouchListener(){
 
 			@Override

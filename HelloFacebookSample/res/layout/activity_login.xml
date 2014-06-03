@@ -3,18 +3,21 @@
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/background9"
     android:orientation="vertical" >
     
 	<android.support.v4.view.ViewPager
         android:id="@+id/pager_login_activity"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0.95" />
 
 	<com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/indicator"
         android:layout_width="fill_parent"
-        android:layout_height="10dp" />
+        android:padding="10dp"
+        android:layout_height="10dp"
+        android:layout_weight="0.02"  />
 
     <com.facebook.widget.LoginButton
         android:id="@+id/myLoginButton"
@@ -22,7 +25,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
+        android:layout_weight="0.03"
+        android:padding="10dp"
         facebook:confirm_logout="false"
         facebook:fetch_user_info="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
  
 </LinearLayout>

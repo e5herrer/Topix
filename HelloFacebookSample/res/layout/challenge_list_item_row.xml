@@ -8,7 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@+id/label"
-        android:textSize="20px" >
+        android:background="@drawable/textviewback"
+        android:textSize="64px" >
     </TextView>
 
 </LinearLayout> 

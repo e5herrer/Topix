@@ -29,7 +29,8 @@ public class DBHelper {
 	public final static String localChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/nearby/";
 	public final static String createLocalChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
 	public final static String personalPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/users/me/photos/"; //need to append facebook token
-	public final static String randomImageFromChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos/random?fb_access_token=";
+	public final static String randomImageFromChallengeURL_HEAD = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
+	public final static String randomImageFromChallengeURL_TAIL = "/photos/random?fb_access_token=";
 	
 	
 	/*
@@ -290,12 +291,12 @@ public class DBHelper {
 		return null;
 	}
 	
-	public TopixPhoto getRandomPhoto() {
+	public TopixPhoto getRandomPhoto(Challenge todaysChallenge) {
 		TopixPhoto randomPhoto;
 		String response = "";
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
-		Log.d("randomPhoto", "PING URL: " + DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
+		HttpGet httpGet = new HttpGet(DBHelper.randomImageFromChallengeURL_HEAD + todaysChallenge.getId() + randomImageFromChallengeURL_TAIL + Session.getActiveSession().getAccessToken());
+		Log.d("randomPhoto", "RANDOM IMAGE: " + DBHelper.randomImageFromChallengeURL_HEAD + todaysChallenge.getId() + randomImageFromChallengeURL_TAIL + Session.getActiveSession().getAccessToken());
 		try {
 			HttpResponse execute = client.execute(httpGet);
 			InputStream content = execute.getEntity().getContent();

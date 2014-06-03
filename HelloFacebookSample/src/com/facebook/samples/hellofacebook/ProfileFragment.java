@@ -9,6 +9,7 @@ import android.net.Uri;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,8 +50,11 @@ public class ProfileFragment extends SherlockFragment {
 		this.challengeDesc = (TextView) rootView.findViewById(R.id.challenge_desc);
 		this.challengeUpvotes = (TextView) rootView.findViewById(R.id.challenge_upvotes);
         
-       RenderPersonalAlbum album = new RenderPersonalAlbum(personalPics);
-        album.execute();
+        //RenderPersonalAlbum album = new RenderPersonalAlbum(personalPics);
+        //album.execute();
+		
+		RenderChallengeTask rt = new RenderChallengeTask();
+		rt.execute();
      
         challengeName.setText("This is the challengeName");
         challengeDesc.setText("this will be a desc");
@@ -58,7 +62,7 @@ public class ProfileFragment extends SherlockFragment {
 
 
         if(enlargedPic != null){
-			enlargedPic.setPadding(5, 5, 5, 5);   
+			enlargedPic.setPadding(5, 5, 5, 5); 
         }  
         	
        return rootView;
@@ -106,15 +110,25 @@ public class ProfileFragment extends SherlockFragment {
 
 	                
     	}
+    	 
     }   
     
-  //Needed to impliment this on fragments because a context switch out of main activity caused a crach
-    //more info here https://code.google.com/p/android/issues/detail?id=19211
-    @Override 
-    public void onSaveInstanceState(Bundle outState) 
-    {
-    //first saving my state, so the bundle wont be empty.
-    outState.putString("WORKAROUND_FOR_BUG_19917_KEY",  "WORKAROUND_FOR_BUG_19917_VALUE");
-    super.onSaveInstanceState(outState);
-    }
+    private class RenderChallengeTask extends AsyncTask<String, Void, Challenge> {		
+
+        @Override
+        protected Challenge doInBackground(String... urls) {
+        	return db.getLatestChallenge(urls);
+        }
+
+        @Override
+        protected void onPostExecute(Challenge challenge) {
+        	if(challenge != null) { 
+        		RenderPersonalAlbum album = new RenderPersonalAlbum(personalPics);
+                album.execute();
+             
+        	}
+        		
+        }
+    } 
+    
 }

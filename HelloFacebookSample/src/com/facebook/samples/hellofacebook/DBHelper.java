@@ -28,7 +28,7 @@ public class DBHelper {
 	public final static String baseVoteURL = "http://vast-eyrie-9726.herokuapp.com/api/photos/";
 	public final static String localChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/nearby/";
 	public final static String createLocalChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
-	public final static String personalPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/users/me/photos/"; //need to append facebook token
+	public final static String personalPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/users/me/photos/?fb_access_token="; //need to append facebook token
 	public final static String randomImageFromChallengeURL_HEAD = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
 	public final static String randomImageFromChallengeURL_TAIL = "/photos/random?fb_access_token=";
 	
@@ -415,7 +415,8 @@ public class DBHelper {
 		TopixPhoto [] topPhotos;
 		String [] retString;
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
+		Log.d("getMyPhotos", "URL : " + DBHelper.personalPhotosURL + Session.getActiveSession().getAccessToken()); 
+		HttpGet httpGet = new HttpGet(DBHelper.personalPhotosURL + Session.getActiveSession().getAccessToken());
 		try {
 			HttpResponse execute = client.execute(httpGet);
 			InputStream content = execute.getEntity().getContent();
@@ -426,6 +427,8 @@ public class DBHelper {
 				response += s;
 			}
 
+			Log.d("getMyPhotos" , response); 
+			
 			JSONObject jObj = new JSONObject(response);
 			JSONArray jArr = jObj.getJSONArray("photos");
 			topPhotos = new TopixPhoto[jArr.length()];

@@ -40,10 +40,12 @@ public class GlobalCompetitorFragment extends SherlockFragment {
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
         iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         
+
         
         GetTodaysChallengeTask gt = new GetTodaysChallengeTask();
         gt.execute(); 
        
+        
         rootView.setOnTouchListener( new OnTouchListener(){
 
 			@Override

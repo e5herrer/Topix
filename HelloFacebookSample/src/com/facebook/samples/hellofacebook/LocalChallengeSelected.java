@@ -35,11 +35,8 @@ public class LocalChallengeSelected extends Activity {
 	private static String tag = "ChallengeFragment";
 	private DBHelper db = new DBHelper(); 
 	public TextView challengeText;
-	String topPhotos[] = {"https://lh6.googleusercontent.com/--frfTBfyba0/AAAAAAAAAAI/AAAAAAAACYc/GbV18P1SE3A/w48-c-h48/photo.jpg",
-			"http://cache.desktopnexus.com/thumbnails/308116-bigthumbnail.jpg",
-			"http://upload.wikimedia.org/wikipedia/commons/e/e9/Felis_silvestris_silvestris_small_gradual_decrease_of_quality.png"
-			}; //this is a temp replace this with the database url string array on the oncreate method.
-
+	
+	
 	private static final String TAG = "CallCamera";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
 	
@@ -50,6 +47,8 @@ public class LocalChallengeSelected extends Activity {
 	
 	int enablebuttonselector = 0;
     Button bu;
+    
+    GridView gridview;
 	
 	
     @Override
@@ -67,15 +66,11 @@ public class LocalChallengeSelected extends Activity {
         myLocalChallenge = (Challenge) i.getSerializableExtra("challenge"); 
         challengeText.setText(myLocalChallenge.getTitle() + myLocalChallenge.getDescription());
         
-        //RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
-        //atestChallengeTask.execute(DBHelper.latestChallengeURLString);
- 
         //initialize top photos
-        GridView gridview = (GridView) findViewById(R.id.top_photos_gridview_local); //almost like original code but since its a fragment need to call on the rooview 
-	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
-	    //gridview.setAdapter(gridadapter);
-	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(myLocalChallenge, gridview);
-	    getTopPhotosTask.execute();
+        gridview = (GridView) findViewById(R.id.top_photos_gridview_local); //almost like original code but since its a fragment need to call on the rooview 
+
+        displayTopPhotos();
+        
 	    //setting gridview onclick controller
 	    /**
          * On Click event for Single Gridview Item
@@ -89,7 +84,6 @@ public class LocalChallengeSelected extends Activity {
                 Intent intent = new Intent(getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
                 // passing array index
                 intent.putExtra("id", position);
-                intent.putExtra("gallery", topPhotos);
                 startActivity(intent);
             }
         });
@@ -123,6 +117,11 @@ public class LocalChallengeSelected extends Activity {
         });
         
         
+    }
+    
+    public void displayTopPhotos() {
+	    GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, myLocalChallenge);
+	    getTopPhotosTask.execute();
     }
     
 
@@ -162,12 +161,11 @@ public class LocalChallengeSelected extends Activity {
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
 		        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 		        byte[] byteArray = byteArrayOutputStream .toByteArray();
-		        //encoded should be the string we use for sending to server
 		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(myLocalChallenge);
 		        uploadPhotoTask.execute(encoded); 
-		      	//
 		        bu.setEnabled(true);
+		        displayTopPhotos();
 		       
 		      } else {
 		        photoUri = data.getData();
@@ -220,20 +218,38 @@ public class LocalChallengeSelected extends Activity {
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
     	GridView g;
     	Challenge c;
-    	GetTopPhotosTask(Challenge c, GridView g) {
+    	GetTopPhotosTask(GridView g, Challenge c) {
     		this.g = g;
-    		this.c = c; 
+    		this.c = c;
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getLocalPhotos(c, params); 
+    		return db.getTopPhotos(c, params); 
     	}
     	
     	@Override
-		protected void onPostExecute(TopixPhoto [] result) {
+		protected void onPostExecute(final TopixPhoto [] result) {
+    		if(result == null){
+    			return;
+    		}
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getBaseContext(), result); //same need to call on rootview for context
 			Log.d("RenderTopPhotosTask", "checkpoint 2"); 
+			
 			g.setAdapter(gridadapter);
+			
+	        g.setOnItemClickListener(new OnItemClickListener() {
+	            @Override
+	            public void onItemClick(AdapterView<?> parent, View v,
+	                    int position, long id) {
+	        	    Log.i(tag, "onItemClick");
+	                Intent intent = new Intent(getBaseContext(), FullImageActivity.class); //changed getApplicationContext() with getActivity()
+	                intent.putExtra("id", position);
+
+	                intent.putExtra("topPhotos", new TopixPhotoArrayWrapper(result));
+	                
+	                startActivity(intent);
+	            }
+	        });
     	}
     }
     

@@ -15,7 +15,7 @@
 	<com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/indicator"
         android:layout_width="fill_parent"
-        android:padding="10px"
+        android:padding="10dp"
         android:layout_height="10dp"
         android:layout_weight="0.02"  />
 

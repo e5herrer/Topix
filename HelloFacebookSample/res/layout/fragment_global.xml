@@ -5,78 +5,94 @@
     android:layout_height="match_parent"
     android:background="@drawable/background9"
     android:orientation="vertical" >
-    
+
     <com.facebook.widget.LoginButton
-            android:id="@+id/login_button1"
+        android:id="@+id/login_button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        facebook:confirm_logout="false"
+        facebook:fetch_user_info="true" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Challenges"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/challengeHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:visibility="gone"
-  
-            facebook:confirm_logout="false"
-            facebook:fetch_user_info="true" />
-    
+            android:layout_marginTop="25dp"
+            android:text="TextView" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="Challenges"
-        android:layout_below="@id/login_button1"
-        android:textSize="20dp" />
-    
- 
-    <GridView
-        android:id="@+id/top_photos_gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/textView1"
-        android:columnWidth="80dp"
-        android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp" >
-
-    </GridView>
-
-	<Button
-        android:id="@+id/imageButton1"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/postPhoto"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Popular"
+            android:layout_marginBottom="10dp"
+            android:textSize="20sp" />
+
+        <GridView
+            android:id="@+id/top_photos_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:columnWidth="80dp"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp"
+            android:layout_marginBottom="10dp" >
+        </GridView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:text="Take Photo" />
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="34dp" >
 
-    <Button
-        android:id="@+id/postPhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:text="Share to Facebook" />
+        <Button
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.50"
+            android:layout_marginBottom="10dp"
+            android:text="Take Photo!" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:text="Popular"
-        android:textSize="20dp" />
+<!--         <Button
+            android:id="@+id/postPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.50"
+            android:text="Share Photo!" /> -->
 
-    <TextView
-        android:id="@+id/challengeHolder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/photo_image"
-        android:layout_below="@+id/login_button1"
-        android:layout_marginTop="25dp"
-        android:text="TextView" />
+    </LinearLayout>
 
 </RelativeLayout>

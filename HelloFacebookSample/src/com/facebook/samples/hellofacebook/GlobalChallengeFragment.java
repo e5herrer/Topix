@@ -45,7 +45,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	ImageView photoImage = null;
 	
 	int enablebuttonselector = 0;
-    Button bu;
+    Button ib;
     
     Challenge todaysChallenge; 
 	
@@ -76,7 +76,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
         
         
-        Button ib = (Button) rootView.findViewById(R.id.imageButton1);
+        ib = (Button) rootView.findViewById(R.id.imageButton1);
         ib.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -89,7 +89,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
-         
+      /*   
         bu = (Button) rootView.findViewById(R.id.postPhoto);
         bu.setEnabled(false);
         bu.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +101,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
             }
-        });
+        }); */
         
         return rootView;
     }
@@ -116,7 +116,24 @@ public class GlobalChallengeFragment extends SherlockFragment {
 		    }
 		  }
 		  String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
+		  
+		  	if (filepath != null) {
+	        ib.setText("Share photo!");
+	        ib.setOnClickListener(new View.OnClickListener() {
+
+	            @Override
+	            public void onClick(View v) {
+	            	 Intent i = new Intent(getActivity().getBaseContext(), FacebookPhotoUpload.class);
+	            	 i.putExtra("photofb", filepath);
+	            	 //Log.d("HERE IS THE MESSAGE", filepath);
+	                 startActivity(i);
+	            }
+	        });
+		  	}
+		  
 		  return new File(directory.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+		  
+		  
 		}
 	
    String filepath = null;
@@ -148,7 +165,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
 	        uploadPhotoTask.execute(encoded); 
 	      	
-	        bu.setEnabled(true);
+	        //bu.setEnabled(true);
 	       
 	      } else {
 	        photoUri = data.getData();
@@ -166,7 +183,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
 	        uploadPhotoTask.execute(encoded); 
 	      	//
-	        bu.setEnabled(true);
+	        //bu.setEnabled(true);
 	      }
 
 	    } else {

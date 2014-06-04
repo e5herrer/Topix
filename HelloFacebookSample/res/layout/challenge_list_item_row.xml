@@ -2,14 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
-    
+
     <TextView
         android:id="@+id/txtTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@+id/label"
-        android:background="@drawable/textviewback"
-        android:textSize="64px" >
+        android:layout_width="767px"
+        android:layout_height="100px"
+        android:background="@drawable/shape"
+        android:paddingTop="14dip"
+        android:paddingLeft="4dip"
+        android:fontFamily="sans-serif-condensed"
+      	android:textColor="#FF000000" 
+        android:textSize="40px" >
     </TextView>
 
-</LinearLayout> 
+</LinearLayout>

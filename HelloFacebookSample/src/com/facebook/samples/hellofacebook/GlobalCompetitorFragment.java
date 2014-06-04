@@ -28,6 +28,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 	private ImageView iview; 
 	private int y1, y2;
 	
+	private Challenge todaysChallenge;
+	
 	private int currentPhotoID; 
 	
 	DBHelper db = new DBHelper(); 
@@ -38,7 +40,11 @@ public class GlobalCompetitorFragment extends SherlockFragment {
         View rootView = inflater.inflate(R.layout.fragment_global_competitor, container, false);
         iview = (ImageView) rootView.findViewById(R.id.competitor_view);
         
-//        displayRandomImage();
+
+        
+        GetTodaysChallengeTask gt = new GetTodaysChallengeTask();
+        gt.execute(); 
+       
         
         rootView.setOnTouchListener( new OnTouchListener(){
 
@@ -111,7 +117,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 
 		@Override
 		protected TopixPhoto doInBackground(String... params) {
-			return db.getRandomPhoto();
+			return db.getRandomPhoto(todaysChallenge);
 		}
 		
 		@Override
@@ -141,6 +147,20 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 			return null;
 		}
     	
+    }
+    
+    private class GetTodaysChallengeTask extends AsyncTask<String, String, Challenge> {
+    	
+    	@Override
+    	protected Challenge doInBackground(String ... params) {
+    		return db.getLatestChallenge();
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(Challenge result) {
+    		todaysChallenge = result;
+    		displayRandomImage();
+    	}
     }
 
 }

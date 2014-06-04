@@ -57,24 +57,12 @@ public class GlobalChallengeFragment extends SherlockFragment {
         
         challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
         
-        //db.getLatestChallenge(challengeText);
         RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
         latestChallengeTask.execute();
  
         //initialize top photos
         gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
-	    //final TopPhotoAdapter gridadapter = new TopPhotoAdapter(rootView.getContext(), topPhotos); //same need to call on rootview for context
-	    //gridview.setAdapter(gridadapter);
-        
-              
-	    //GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview);
-	    //getTopPhotosTask.execute();
-	    //setting gridview onclick controller
-	    /**
-         * On Click event for Single Gridview Item
-         * */
 
-        
         
         ib = (Button) rootView.findViewById(R.id.imageButton1);
         ib.setOnClickListener(new View.OnClickListener() {
@@ -89,19 +77,6 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
-      /*   
-        bu = (Button) rootView.findViewById(R.id.postPhoto);
-        bu.setEnabled(false);
-        bu.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-            	 Intent i = new Intent(getActivity().getBaseContext(), FacebookPhotoUpload.class);
-            	 i.putExtra("photofb", filepath);
-            	 //Log.d("HERE IS THE MESSAGE", filepath);
-                 startActivity(i);
-            }
-        }); */
         
         return rootView;
     }

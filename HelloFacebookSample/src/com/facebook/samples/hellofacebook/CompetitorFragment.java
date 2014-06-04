@@ -23,12 +23,12 @@ public class CompetitorFragment extends SherlockFragment {
                 R.layout.fragment_challenge);
  
         // Create Child Tab1
-        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Global"),
+        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Swipe Up/Down to vote!"),
                 GlobalCompetitorFragment.class, null);
  
         // Create Child Tab2
-        mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("Local"),
-                LocalCompetitorFragment.class, null);
+        //mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("Local"),
+        //        LocalCompetitorFragment.class, null);
         return mTabHost;
     }
     

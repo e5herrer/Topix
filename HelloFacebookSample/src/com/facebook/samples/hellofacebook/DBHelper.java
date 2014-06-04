@@ -1,10 +1,13 @@
 package com.facebook.samples.hellofacebook;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -14,24 +17,69 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.facebook.Session;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 public class DBHelper {
 
-	public final static String latestChallengeURLString = "http://vast-eyrie-9726.herokuapp.com/api/challenges/latest";
-	public final static String dummyTopPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos";
-	public final static String topPhotoBaseURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/"; // + id/photos
-	public final static String baseVoteURL = "http://vast-eyrie-9726.herokuapp.com/api/photos/";
-	public final static String localChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/nearby/";
-	public final static String createLocalChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/";
-	public final static String personalPhotosURL = "http://vast-eyrie-9726.herokuapp.com/api/users/me/photos/"; //need to append facebook token
-	public final static String randomImageFromChallengeURL = "http://vast-eyrie-9726.herokuapp.com/api/challenges/1/photos/random?fb_access_token=";
+	public final static String serverRoot = "http://vast-eyrie-9726.herokuapp.com/";
+	public final static String latestChallengeURLString = serverRoot + "api/challenges/latest";
+	public final static String dummyTopPhotosURL = serverRoot + "api/challenges/1/photos";
+	public final static String topPhotoBaseURL = serverRoot + "api/challenges/";
+	public final static String baseVoteURL = serverRoot + "api/photos/";
+	public final static String localChallengeURL = serverRoot + "api/challenges/nearby";
+	public final static String createLocalChallengeURL = serverRoot + "api/challenges/";
+	public final static String personalPhotosURL = serverRoot + "api/users/me/photos";
+	public final static String randomImageFromChallengeURL_HEAD = serverRoot + "api/challenges/";
+	public final static String randomImageFromChallengeURL_TAIL = "/photos/random";
 	
+	private String postHttpRequest(String url, JSONObject data) throws ClientProtocolException, IOException {
+		DefaultHttpClient client = new DefaultHttpClient(); 
+		Log.i("HTTP POST request url", url);
+		Log.i("HTTP POST request body", data.toString());
+		HttpPost httpPost = new HttpPost(url); 
+		StringEntity se = new StringEntity(data.toString());  
+		se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+		httpPost.setEntity(se);
+		HttpResponse execute = client.execute(httpPost);
+		if(null == execute) {
+			return null;
+		}
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(
+				execute.getEntity().getContent()));
+		String s = "";
+		String response = "";
+		while ((s = buffer.readLine()) != null) {
+			response += s;
+		}
+		Log.i("HTTP POST request response", response);
+		return response;
+	}
 	
+	private String getHttpRequest(String url, String ... params) throws ClientProtocolException, IOException {
+		DefaultHttpClient client = new DefaultHttpClient(); 
+		String parameters = "?" + TextUtils.join("&", params);
+		Log.i("HTTP GET request url", url + parameters);
+		HttpGet httpGet = new HttpGet(url + parameters);
+		HttpResponse execute = client.execute(httpGet);
+		if(null == execute) {
+			return null;
+		}
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(
+				execute.getEntity().getContent()));
+		String s = "";
+		String response = "";
+		while ((s = buffer.readLine()) != null) {
+			response += s;
+		}
+		Log.i("HTTP GET request response", response);
+		return response;
+	}
 	/*
 	 * { "photo": { "image_content_type":"image/jpg",
 	 * "image_file_name":"test.jpg", "image_data":"BASE64STR", "caption":"   " }
@@ -49,42 +97,22 @@ public class DBHelper {
 		}
 	*/
 	public String submitLocalChallenge(String title, String desc, String longitude, String latitude) { 
-		DefaultHttpClient client = new DefaultHttpClient(); 
-		HttpPost httpPost = new HttpPost(createLocalChallengeURL); 
+		JSONObject outerJSON = new JSONObject(); 
+		JSONObject innerJSON = new JSONObject(); 
 		try {
-			JSONObject outerJSON = new JSONObject(); 
-			JSONObject innerJSON = new JSONObject(); 
-			
 			innerJSON.put("title", title);
 			innerJSON.put("description", desc);
 			innerJSON.put("longitude", longitude);
 			innerJSON.put("latitude", latitude); 
-			
 			outerJSON.put("challenge", innerJSON);
-			
-
-			
-			StringEntity se = new StringEntity(outerJSON.toString());  
-	        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-	        httpPost.setEntity(se);
-	        HttpResponse execute = client.execute(httpPost);
-	        
-	        if (execute == null) {
-            	Log.d("submitLocalChallenge", "response is null");
-            } else { 
-            	//parse HTTPrespose
-            	BufferedReader buffer = new BufferedReader(new InputStreamReader(
-            			execute.getEntity().getContent()));
-            	String s = "";
-            	String response = "";
-    			while ((s = buffer.readLine()) != null) {
-    				response += s;
-    			}
-            	Log.d("createLoc",  response);
-            }
-            
+		} catch (JSONException e1) {
+        	Log.e("submitLocalChallenge", "Malformed JSON");
+		}
+		
+		try {
+			postHttpRequest(createLocalChallengeURL, outerJSON);
         } catch (Exception e) {
-        	Log.d("pushPhoto", "Exception raised in pushPhoto");
+        	Log.e("submitLocalChallenge", "HTTP Request failed:" + e.getMessage());
         }
 		
 		return null;
@@ -92,20 +120,9 @@ public class DBHelper {
 	
 	
 	public Challenge [] getLocalChallenges(String longitude, String latitude) {
-		String response = "";
-		Challenge [] retChallenges;
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.localChallengeURL + "?latitude=" + latitude + "&longitude=" + longitude);
+		Challenge [] retChallenges = null;
 		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					content));
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
-			}
-
+			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
 			Log.d("check1", "check0");
 			JSONArray jArr = new JSONArray(response);
 			
@@ -119,350 +136,186 @@ public class DBHelper {
 				String desc = jObj.getString("description");
 				retChallenges[i] = new Challenge(id, title, desc);
 			}
-			
-			return retChallenges;
 		} catch (Exception e) {
-			Log.d("getLocalChallenge", "Exception caught in getLocalChallenge");
+			Log.d("getLocalChallenge", "HTTP Request failed:" + e.getMessage());
 		}
 		
-		return null;
-		
+		return retChallenges;
 	}
 	
 	public void pushVote(int photoID, String voteResult ) {
-		DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(DBHelper.baseVoteURL + photoID + "/vote");
-        JSONObject outerJSON = new JSONObject(); 
-        try {
-        	outerJSON.put("fb_access_token", Session.getActiveSession().getAccessToken());
-            JSONObject voteJSON = new JSONObject(); 
-            //voteJSON.put("image_id", photoID);
-            voteJSON.put("vote_result", voteResult);
-            outerJSON.put("vote", voteJSON);
-            StringEntity se = new StringEntity(outerJSON.toString());  
-            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(se);
-            HttpResponse execute = client.execute(httpPost);
-
-            if (execute == null) {
-            	Log.d("pushVote", "response is null");
-            } else { 
-            	//parse HTTPrespose
-            	BufferedReader buffer = new BufferedReader(new InputStreamReader(
-            			execute.getEntity().getContent()));
-            	String s = "";
-            	String response = "";
-    			while ((s = buffer.readLine()) != null) {
-    				response += s;
-    			}
-            	Log.d("pushVote",  response);
-            }
-            
-        } catch (Exception e) {
-        	Log.d("pushPhoto", "Exception raised in pushPhoto");
-        }
+		JSONObject outerJSON = new JSONObject();
+		JSONObject innerJSON = new JSONObject();
+		try {
+			outerJSON.put("fb_access_token", Session.getActiveSession()
+					.getAccessToken());
+			innerJSON.put("vote_result", voteResult);
+			outerJSON.put("vote", innerJSON);
+		} catch (JSONException e) {
+			Log.e("pushVote", "Malformed JSON");
+			return;
+		}
+		try {
+			postHttpRequest(DBHelper.baseVoteURL + photoID + "/vote", outerJSON);
+		} catch (Exception e) {
+			Log.d("pushVote", "HTTP Request failed:" + e.getMessage());
+		}
 	}
 
-	/*
-	public void pushPhoto(String encodedImage) {
-		DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(DBHelper.dummyTopPhotosURL);
-        JSONObject json = new JSONObject(); 
-        try {
-            json.put("fb_access_token",Session.getActiveSession().getAccessToken());
-            JSONObject json2 = new JSONObject(); 
-            json2.put("image_content_type", "image/png");
-            json2.put("image_file_name", "dummy_image2.png");
-            json2.put("image_data", encodedImage);
-            json2.put("caption", " ");
-            json.put("photo", json2);
-            StringEntity se = new StringEntity(json.toString());  
-            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(se);
-            HttpResponse execute = client.execute(httpPost);
-            
-            Log.d("postPhoto", "Checkpoint 1");
-
-            if (execute == null) {
-            	Log.d("postPhoto", "response is null");
-            } else { 
-            	//parse HTTPrespose
-            	BufferedReader buffer = new BufferedReader(new InputStreamReader(
-            			execute.getEntity().getContent()));
-            	String s = "";
-            	String response = "";
-    			while ((s = buffer.readLine()) != null) {
-    				response += s;
-    			}
-            	Log.d("postPhoto",  response);
-            }
-            
-        } catch (Exception e) {
-        	Log.d("pushPhoto", "Exception raised in pushPhoto");
-        }
-	}
-	
-	*/
-	
 	public void pushPhoto(Challenge c, String encodedImage) {
-		DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(DBHelper.topPhotoBaseURL + c.getId() + "/photos");
-        JSONObject json = new JSONObject(); 
+        JSONObject outerJSON = new JSONObject(); 
+        JSONObject innerJSON = new JSONObject(); 
         try {
-            json.put("fb_access_token",Session.getActiveSession().getAccessToken());
-            JSONObject json2 = new JSONObject(); 
-            json2.put("image_content_type", "image/png");
-            json2.put("image_file_name", "dummy_image2.png");
-            json2.put("image_data", encodedImage);
-            json2.put("caption", " ");
-            json.put("photo", json2);
-            StringEntity se = new StringEntity(json.toString());  
-            se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(se);
-            HttpResponse execute = client.execute(httpPost);
-            
-            Log.d("postPhoto", "Checkpoint 1");
-
-            if (execute == null) {
-            	Log.d("postPhoto", "response is null");
-            } else { 
-            	//parse HTTPrespose
-            	BufferedReader buffer = new BufferedReader(new InputStreamReader(
-            			execute.getEntity().getContent()));
-            	String s = "";
-            	String response = "";
-    			while ((s = buffer.readLine()) != null) {
-    				response += s;
-    			}
-            	Log.d("postPhoto",  response);
-            }
-            
+            outerJSON.put("fb_access_token",Session.getActiveSession().getAccessToken());
+            innerJSON.put("image_content_type", "image/png");
+            innerJSON.put("image_file_name", "dummy_image2.png");
+            innerJSON.put("image_data", encodedImage);
+            innerJSON.put("caption", " ");
+            outerJSON.put("photo", innerJSON);
+        } catch (JSONException e) {
+        	Log.e("pushPhoto", "Malformed JSON");
+        	return;
+        }
+        try {
+        	postHttpRequest(DBHelper.topPhotoBaseURL + c.getId() + "/photos", outerJSON);
         } catch (Exception e) {
-        	Log.d("pushPhoto", "Exception raised in pushPhoto");
+			Log.d("pushPhoto", "HTTP Request failed:" + e.getMessage());
         }
 	}
 
 	public TopixPhoto[] getTopPhotos(Challenge topChallenge, String... params) {
-		String response = "";
-		TopixPhoto [] topPhotos;
-		String [] retString;
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/");
+		TopixPhoto [] topPhotos = null;
 		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			Log.d("check1", "check-c");
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					content));
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
-			}
-
+			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/");
 			Log.d("check1", "check0");
-			JSONObject jObj = new JSONObject(response);
-			Log.d("check1", "check1");
-			JSONArray jArr = jObj.getJSONArray("photos");
-			topPhotos = new TopixPhoto[jArr.length()];
-			retString = new String[jArr.length()];
-			Log.d("check1", "check2a");
-
-			for (int i = 0; i < jArr.length(); i++) {
-				
-				int photoID = jArr.getJSONObject(i).getJSONObject("photo")
-						.getInt("id"); 
-				
-				String photoURL = jArr.getJSONObject(i).getJSONObject("photo")
-						.getString("url");
-				
-				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
-				
-			}
-	
-			Log.d("check1", "check2b");
-
-			return topPhotos;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d("check1", "Exception caught in GetTopPhotosTask");
-		}
-		return null;
-	}
-	
-	public TopixPhoto getRandomPhoto() {
-		TopixPhoto randomPhoto;
-		String response = "";
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
-		Log.d("randomPhoto", "PING URL: " + DBHelper.randomImageFromChallengeURL + Session.getActiveSession().getAccessToken());
-		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			 
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
-			
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
-				Log.d("randomPhoto", s);
-			}
-			
-			if(response.equals("{}")) {
+			JSONObject responseJSON = null;
+			JSONArray photosJSON = null;
+			try {
+				responseJSON = new JSONObject(response);
+				photosJSON = responseJSON.getJSONArray("photos");
+			} catch (JSONException e) {
+	        	Log.e("getTopPhotos", "Malformed JSON response: " + e.getMessage());
 				return null;
 			}
-			
-			JSONObject jObj = new JSONObject(response);
-			JSONObject jPhoto = jObj.getJSONObject("photo");
-			
-			return new TopixPhoto(jPhoto.getInt("id"), jPhoto.getString("image"));
-			
+			topPhotos = new TopixPhoto[photosJSON.length()];
+			for (int i = 0; i < photosJSON.length(); i++) {
+				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
+				int photoID = photoJSON.getInt("id"); 
+				String photoURL = photosJSON.getJSONObject(i).getJSONObject("photo").getString("url");
+				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
+			}
 		} catch (Exception e) {
-			Log.d("randomPhoto", "exception raised in random photo");
+			Log.d("getTopPhotos", "HTTP Request failed:" + e.getMessage());
 		}
-			return null;
+		return topPhotos;
+	}
+	
+	public TopixPhoto getRandomPhoto(Challenge todaysChallenge) {
+		TopixPhoto randomPhoto = null;
+		try {
+			String url = DBHelper.randomImageFromChallengeURL_HEAD + todaysChallenge.getId();
+			url = url + randomImageFromChallengeURL_TAIL;
+			String fb_access_token = Session.getActiveSession().getAccessToken();
+			String response = getHttpRequest(url, "fb_access_token=" + fb_access_token);
+			
+			JSONObject responseJSON = null;
+			JSONObject photoJSON = null;
+			try {
+				responseJSON = new JSONObject(response);
+				photoJSON = responseJSON.getJSONObject("photo");
+			} catch (JSONException e) {
+	        	Log.e("getTopPhotos", "Malformed JSON response: " + e.getMessage());
+	        	return null;
+			}
+			randomPhoto = new TopixPhoto(photoJSON.getInt("id"), photoJSON.getString("image"));
+		} catch (Exception e) {
+			Log.d("getRandomPhoto", "HTTP Request failed:" + e.getMessage());
+		}
+		return randomPhoto;
 
 	}
 
 	public TopixPhoto[] getLocalPhotos(Challenge c, String... params) {
-		String response = "";
-		TopixPhoto [] topPhotos;
-		String [] retString;
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.topPhotoBaseURL + c.getId() + "/photos");
+		TopixPhoto [] topPhotos = null;
 		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					content));
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
+			String response = getHttpRequest(DBHelper.topPhotoBaseURL + c.getId() + "/photos");
+			JSONObject responseJSON = null;
+			JSONArray photosJSON = null;
+			try {
+				responseJSON = new JSONObject(response);
+				photosJSON = responseJSON.getJSONArray("photos");
+			} catch (JSONException e) {
+	        	Log.e("getLocalPhotos", "Malformed JSON response: " + e.getMessage());
+	        	return null;
 			}
-
-			Log.d("check1", "check0");
-			JSONObject jObj = new JSONObject(response);
-			Log.d("check1", "check1");
-			JSONArray jArr = jObj.getJSONArray("photos");
-			topPhotos = new TopixPhoto[jArr.length()];
-			retString = new String[jArr.length()];
-			Log.d("check1", "check2a");
-
-			for (int i = 0; i < jArr.length(); i++) {
-				/*
-				retString[i] = jArr.getJSONObject(i).getJSONObject("photo")
-						.getString("url"); // grabs URL from JSONObj
-				*/
-				
-				int photoID = jArr.getJSONObject(i).getJSONObject("photo")
-						.getInt("id"); 
-				
-				String photoURL = jArr.getJSONObject(i).getJSONObject("photo")
-						.getString("url");
-				
+			topPhotos = new TopixPhoto[photosJSON.length()];
+			for (int i = 0; i < photosJSON.length(); i++) {
+				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
+				int photoID = photoJSON.getInt("id"); 
+				String photoURL = photoJSON.getString("url");
 				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
 				
 			}
-			
-
-			Log.d("check1", "check2b");
-
-			return topPhotos;
-
 		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d("check1", "Exception caught in GetTopPhotosTask");
+			Log.d("getLocalPhotos", "HTTP Request failed:" + e.getMessage());
 		}
-		return null;
+		return topPhotos;
 	}
 	
 	public Challenge getLatestChallenge(String... urls) {
-		String response = "";
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.latestChallengeURLString);
+		Challenge challenge = null;
 		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			Log.d("getLatestChallenge","i am at the checkpoint1");
-			BufferedReader buffer = new BufferedReader(
-					new InputStreamReader(content));
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
+			String response = getHttpRequest(DBHelper.latestChallengeURLString);
+			JSONObject responseJSON = null; 
+        	JSONObject challengeJSON = null; 
+			try {
+				responseJSON = new JSONObject(response); 
+	        	challengeJSON = responseJSON.getJSONObject("challenge"); 
+			} catch (JSONException e) {
+	        	Log.e("getLatestChallenge", "Malformed JSON response: " + e.getMessage());
+	        	return null;
 			}
-			Log.d("getLatestChallenge","i am at the checkpoint2");
-			Log.d("getLatestChallenge", response); 
-			Log.d("getLatestChallenge","i am at the checkpoint3");
-			
-			JSONObject j = new JSONObject(response); 
-		
-        	JSONObject challenge = (JSONObject)j.get("challenge"); 
-        	
-        	return new Challenge(challenge.getInt("id"), challenge.getString("title"), challenge.getString("description"));
-
+        	int id = challengeJSON.getInt("id");
+			String title = challengeJSON.getString("title");
+			String description = challengeJSON.getString("description");
+			challenge = new Challenge(id, title, description);
 		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d("getLatestChallenge", "exception caught");
+			Log.d("getLatestChallenge", "HTTP Request failed:" + e.getMessage());
 		}
-	
-		return null;
+		return challenge;
 	}
 
 	
 	public TopixPhoto[] getPersonalPhotos() {
-		String response = "";
-		TopixPhoto [] topPhotos;
-		String [] retString;
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(DBHelper.dummyTopPhotosURL);
+		TopixPhoto [] topPhotos = null;
 		try {
-			HttpResponse execute = client.execute(httpGet);
-			InputStream content = execute.getEntity().getContent();
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					content));
-			String s = "";
-			while ((s = buffer.readLine()) != null) {
-				response += s;
+			String fb_access_token = Session.getActiveSession().getAccessToken();
+			String response = getHttpRequest(DBHelper.personalPhotosURL, "fb_access_token=" + fb_access_token);
+			JSONObject responseJSON = null;
+			JSONArray photosJSON = null;
+			try {
+				responseJSON = new JSONObject(response);
+				photosJSON = responseJSON.getJSONArray("photos");
+			} catch (JSONException e) {
+	        	Log.e("getPersonalPhotos", "Malformed JSON response: " + e.getMessage());
+	        	return null;
 			}
-
-			JSONObject jObj = new JSONObject(response);
-			JSONArray jArr = jObj.getJSONArray("photos");
-			topPhotos = new TopixPhoto[jArr.length()];
-			retString = new String[jArr.length()];
-
-			for (int i = 0; i < jArr.length(); i++) {				
-				int photoID = jArr.getJSONObject(i).getJSONObject("photo")
-						.getInt("id"); 
-				String photoURL = jArr.getJSONObject(i).getJSONObject("photo")
-						.getString("url");
-				
-
-				Log.d("getPersonalPhotos", "title");
-
-				String challengeTitle = jArr.getJSONObject(i).getJSONObject("photo")
-						.getJSONObject("challenge").getString("title");
-				
-				Log.d("getPersonalPhotos", "photo");
-
-				String challengeDesc = jArr.getJSONObject(i).getJSONObject("photo")
-						.getJSONObject("challenge").getString("description");
-				
-				Log.d("getPersonalPhotos", "likes");
-
-				
-				int upVotes = jArr.getJSONObject(i).getJSONObject("photo").getJSONObject("votes").getInt("likes"); 
-
-				
-				topPhotos[i] = new TopixPhoto(photoID, photoURL, challengeTitle, challengeDesc, upVotes); 
+			topPhotos = new TopixPhoto[photosJSON.length()];
+			for (int i = 0; i < photosJSON.length(); i++) {				
+				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
+				int photoID = photoJSON.getInt("id"); 
+				String photoURL = photoJSON.getString("url");
+				JSONObject challengeJSON = photoJSON.getJSONObject("challenge");
+				String challengeTitle = challengeJSON.getString("title");
+				String challengeDesc = challengeJSON.getString("description");
+				JSONObject votesJSON = photoJSON.getJSONObject("votes");
+				int upVotes = votesJSON.getInt("likes"); 
+				TopixPhoto photo = new TopixPhoto(photoID, photoURL, challengeTitle, challengeDesc, upVotes);
+				topPhotos[i] = photo; 
 			}
-
-			return topPhotos;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return topPhotos;
 	}
-
-
 }

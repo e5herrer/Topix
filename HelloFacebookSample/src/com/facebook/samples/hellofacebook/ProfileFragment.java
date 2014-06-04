@@ -81,13 +81,12 @@ public class ProfileFragment extends SherlockFragment {
     	}
     	
     	protected void onPostExecute(final TopixPhoto [] result) {
-    		if(result == null){
+    		if(result == null || result.length == 0){
     			return;
     		}
 			Log.d("RenderPersonalAlbum", "checkpoint 2");
 			Picasso.with(getActivity().getBaseContext()) 
 	        .load(result[0].getURL()) 
-	        .fit() 
 	        .into(enlargedPic);
 			challengeName.setText("Challenge: " + result[0].getChallenge()); 
 			challengeDesc.setText("Description: " + result[0].getDescription());
@@ -99,7 +98,6 @@ public class ProfileFragment extends SherlockFragment {
 	        	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 	        		 Picasso.with(getActivity().getBaseContext()) 
 	        	        .load(result[position].getURL()) 
-	        	        .fit() 
 	        	        .into(enlargedPic);
 	        		 
 	     			challengeName.setText("Challenge: " + result[position].getChallenge()); 

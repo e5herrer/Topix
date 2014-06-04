@@ -24,12 +24,12 @@ public class ChallengeFragment extends SherlockFragment {
         mTabHost.setup(getSherlockActivity(), getChildFragmentManager(), R.layout.fragment_challenge);
  
         // Create Child Tab1
-        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Global"),
+        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Current"),
                 GlobalChallengeFragment.class, null);
  
         // Create Child Tab2
-        mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("Local"),
-                LocalChallengeFragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("All"),
+                GlobalChallengesFragment.class, null);
         return mTabHost;
     }
  

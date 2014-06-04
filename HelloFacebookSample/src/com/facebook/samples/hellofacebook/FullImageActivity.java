@@ -35,7 +35,6 @@ public class FullImageActivity extends Activity {
         	.load(this.topPhotos[position].getURL()) //
         	//.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         	.error(R.drawable.com_facebook_inverse_icon) // should replace
-        	.fit() 
         	.into(imageView);
 
         		

@@ -43,14 +43,13 @@ public class MyPictureAdapter extends BaseAdapter {
 		if (view == null) {
 			iview = new ImageView(context);
 			iview.setLayoutParams(new GridView.LayoutParams(150,200));
-			iview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			iview.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			iview.setPadding(0, 0, 0, 0);
 		} else {
 			iview = (ImageView) view;	
 		}
 		 Picasso.with(context) 
 	        .load(photos[position].getURL()) 
-	        .fit() 
 	        .into(iview);
 
 		return iview;

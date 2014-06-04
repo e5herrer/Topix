@@ -124,7 +124,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 		protected void onPostExecute(TopixPhoto gotPhoto) {
 			if (gotPhoto != null) { 
 				Log.d("randomPhoto", gotPhoto.getURL());
-				Picasso.with(getActivity()).load(gotPhoto.getURL()).fit() .into(iview);
+				Picasso.with(getActivity()).load(gotPhoto.getURL()).into(iview);
 				currentPhotoID = gotPhoto.getID();
 			} else {
 				iview.setImageResource(R.drawable.voting_instructions);

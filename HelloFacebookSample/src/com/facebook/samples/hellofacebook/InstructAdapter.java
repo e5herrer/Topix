@@ -51,7 +51,6 @@ public class InstructAdapter extends PagerAdapter {
         .load(this.gallery[position]) //
         .placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         .error(R.drawable.com_facebook_inverse_icon) // should replace
-        .fit() 
         .into(instrucImg);
 
         //instrucImg.setImageResource(this.gallery[position]);

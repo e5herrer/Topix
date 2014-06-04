@@ -296,7 +296,7 @@ public class LocalChallengeFragment extends Fragment {
 
 		@Override
 		protected Challenge[] doInBackground(String... params) {
-			return db.getLocalChallenges(params[0], params[1]);
+			return db.getNearbyChallenges(params[0], params[1]);
 		}
 
 		protected void onPostExecute(final Challenge[] challenges) {

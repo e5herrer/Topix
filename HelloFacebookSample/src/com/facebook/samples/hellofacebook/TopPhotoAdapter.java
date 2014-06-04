@@ -46,7 +46,7 @@ public class TopPhotoAdapter extends BaseAdapter {
 		if (view == null) {
 			iview = new ImageView(context);
 			iview.setLayoutParams(new GridView.LayoutParams(230,300));
-			iview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			iview.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			iview.setPadding(5, 5, 5, 5);
 		} else {
 			iview = (ImageView) view;	
@@ -56,7 +56,6 @@ public class TopPhotoAdapter extends BaseAdapter {
         .load(this.topPhotos[position].getURL()) // change to call to get photo URL
         //.placeholder(R.drawable.com_facebook_inverse_icon) //should replace
         .error(R.drawable.com_facebook_inverse_icon) // should replace
-        .fit() 
         .into(iview);
 		return iview;
 	}

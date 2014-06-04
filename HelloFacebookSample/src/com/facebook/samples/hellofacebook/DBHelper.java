@@ -37,6 +37,7 @@ public class DBHelper {
 	public final static String personalPhotosURL = serverRoot + "api/users/me/photos";
 	public final static String randomImageFromChallengeURL_HEAD = serverRoot + "api/challenges/";
 	public final static String randomImageFromChallengeURL_TAIL = "/photos/random";
+	private static final String globalChallengesURL = serverRoot + "api/challenges/";
 	
 	private String postHttpRequest(String url, JSONObject data) throws ClientProtocolException, IOException {
 		DefaultHttpClient client = new DefaultHttpClient(); 
@@ -119,21 +120,37 @@ public class DBHelper {
 	}
 	
 	
-	public Challenge [] getLocalChallenges(String longitude, String latitude) {
+	public Challenge [] getGlobalChallenges() {
+		Challenge [] retChallenges = null;
+		try {
+			String response = getHttpRequest(DBHelper.globalChallengesURL);
+			JSONArray challengesJSON = new JSONArray(response);
+			retChallenges = new Challenge[challengesJSON.length()];
+			for(int i = 0; i < challengesJSON.length() ; i++) {
+				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
+				int id = challengeJSON.getInt("id");
+				String title = challengeJSON.getString("title");
+				String desc = challengeJSON.getString("description");
+				retChallenges[i] = new Challenge(id, title, desc);
+			}
+		} catch (Exception e) {
+			Log.d("getGlobalChallenges", "HTTP Request failed:" + e.getMessage());
+		}
+		
+		return retChallenges;
+	}
+
+	public Challenge [] getNearbyChallenges(String longitude, String latitude) {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
-			Log.d("check1", "check0");
-			JSONArray jArr = new JSONArray(response);
-			
-			retChallenges = new Challenge[jArr.length()];
-			
-			for(int i = 0; i < jArr.length() ; i++) {
-
-				JSONObject jObj = jArr.getJSONObject(i).getJSONObject("challenge");
-				int id = jObj.getInt("id");
-				String title = jObj.getString("title");
-				String desc = jObj.getString("description");
+			JSONArray challengesJSON = new JSONArray(response);
+			retChallenges = new Challenge[challengesJSON.length()];
+			for(int i = 0; i < challengesJSON.length() ; i++) {
+				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
+				int id = challengeJSON.getInt("id");
+				String title = challengeJSON.getString("title");
+				String desc = challengeJSON.getString("description");
 				retChallenges[i] = new Challenge(id, title, desc);
 			}
 		} catch (Exception e) {

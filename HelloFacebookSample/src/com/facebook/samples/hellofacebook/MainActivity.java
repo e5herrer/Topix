@@ -31,7 +31,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private ActionBar actionBar;
     private static String tag = "MainActivity";
     // Tab titles
-    private String[] tabs = { "Profile", "Challenges", "Competitors", "Settings" };
+    private String[] tabs = { "Profile", "Global Challenges", "Local Challenges", "Competitors", "Settings" };
     private int y1, y2; //used to detect up and down swipes
     
     @Override
@@ -101,7 +101,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
 		if (tab_name.equals("Profile")){
 			return R.drawable.id;
-		} else if (tab_name.equals("Challenges")){
+		} else if (tab_name.equals("Global Challenges")){
 			return R.drawable.star;
 		} else if (tab_name.equals("Competitors")){
 			return R.drawable.multi_agents;

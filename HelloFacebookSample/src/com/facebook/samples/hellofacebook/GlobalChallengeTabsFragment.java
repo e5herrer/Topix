@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
  
-public class ChallengeFragment extends SherlockFragment {
+public class GlobalChallengeTabsFragment extends SherlockFragment {
     FragmentTabHost mTabHost;
  
     @Override

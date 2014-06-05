@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.squareup.picasso.Picasso;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -35,6 +36,7 @@ public class ProfileFragment extends SherlockFragment {
 	TextView challengeName;
 	TextView challengeDesc;
 	TextView challengeUpvotes;
+	TextView challengeLikes;
 	GridView gridview;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,9 +48,16 @@ public class ProfileFragment extends SherlockFragment {
 		  
 	  
 		enlargedPic = (ImageView) rootView.findViewById(R.id.enlarged_personal); 
-		this.challengeName = (TextView) rootView.findViewById(R.id.challenge_name);
-		this.challengeDesc = (TextView) rootView.findViewById(R.id.challenge_desc);
-		this.challengeUpvotes = (TextView) rootView.findViewById(R.id.challenge_upvotes);
+		this.challengeName = (TextView) rootView.findViewById(R.id.challenge_desc);
+		this.challengeDesc = (TextView) rootView.findViewById(R.id.challenge_name);
+		this.challengeUpvotes = (TextView) rootView.findViewById(R.id.challenge_upvote_count);
+        challengeLikes = (TextView) rootView.findViewById(R.id.challenge_upvotes);
+		
+        Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
+        
+        challengeName.setTypeface(tf);
+        challengeUpvotes.setTypeface(tf);
+        challengeLikes.setTypeface(tf);
         
         //RenderPersonalAlbum album = new RenderPersonalAlbum(personalPics);
         //album.execute();
@@ -86,9 +95,14 @@ public class ProfileFragment extends SherlockFragment {
 			Log.d("RenderPersonalAlbum", "checkpoint 2");
 			final TopPhotoAdapter gridAdapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
 			gridview.setAdapter(gridAdapter);
-			challengeName.setText("Challenge: " + result[0].getChallenge()); 
-			challengeDesc.setText("Description: " + result[0].getDescription());
-			challengeUpvotes.setText("Likes: "+ result[0].getUpVotes());
+			
+			Picasso.with(getActivity().getBaseContext()) 
+	        .load(result[0].getURL()) 
+	        .into(enlargedPic);
+			
+			challengeName.setText("" + result[0].getChallenge()); 
+			challengeDesc.setText("" + result[0].getDescription());
+			challengeUpvotes.setText("" + result[0].getUpVotes());
 
 			
 	        gridview.setOnItemClickListener(new OnItemClickListener() {
@@ -98,9 +112,9 @@ public class ProfileFragment extends SherlockFragment {
 	        	        .load(result[position].getURL()) 
 	        	        .into(enlargedPic);
 	        		 
-	     			challengeName.setText("Challenge: " + result[position].getChallenge()); 
-	    			challengeDesc.setText("Description: " + result[position].getDescription());
-	    			challengeUpvotes.setText("Likes: " + result[position].getUpVotes());
+	     			challengeName.setText("" + result[position].getChallenge().toLowerCase()); 
+	    			challengeDesc.setText("" + result[position].getDescription());
+	    			challengeUpvotes.setText("" + result[position].getUpVotes());
 	        	} 
 	        });
 

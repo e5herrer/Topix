@@ -8,7 +8,9 @@ import com.facebook.samples.hellofacebook.R;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +25,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
@@ -60,9 +63,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         actionBar.setDisplayShowTitleEnabled(false);
         Log.d("here3", "3");
         // Adding Tabs
+    	
         for (String tab_name : tabs) {
-            /*actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));*/
         	actionBar.addTab(actionBar.newTab().setIcon(getIcon(tab_name)).setTabListener(this));
         }
         Log.d("here4", "4");
@@ -104,11 +106,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     	Log.i(tag, "getIcon");
 
 		if (tab_name.equals("Profile")){
-			return R.drawable.id;
+			return R.drawable.profilegray;
 		} else if (tab_name.equals("Global Challenges")){
-			return R.drawable.star;
+			return R.drawable.globegray;
+		}else if (tab_name.equals("Local Challenges")){
+			return R.drawable.localgray;
 		} else if (tab_name.equals("Competitors")){
-			return R.drawable.multi_agents;
+			return R.drawable.votegray;
 		} else if (tab_name.equals("Settings")){
 			return R.drawable.configuration;
 		} else {
@@ -118,6 +122,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
 	@Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
+
+		
     }
  
     @Override
@@ -125,6 +131,27 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     	Log.i(tag, "onTabSelected");
         // on tab selected
         // show respected fragment view
+		int position = tab.getPosition();
+		int newIcon = 0;
+		
+		Log.i(tag, ""+position);
+		if (position == 0) {
+			newIcon = R.drawable.profile;
+		} 
+		if (position == 1) {
+			newIcon = R.drawable.globe;
+		} 
+		if (position == 2) {
+			newIcon = R.drawable.local;
+		} 
+		if (position == 3) {
+			newIcon = R.drawable.vote;
+		} 
+		
+		if ( newIcon != 0) {
+			actionBar.getTabAt(position).setIcon(newIcon);
+		}
+
         viewPager.setCurrentItem(tab.getPosition());
     }
     
@@ -145,6 +172,31 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    	Log.i(tag, "onTabUNelected");
+		int position = tab.getPosition();
+		
+		int newIcon = 0;
+
+		
+		Log.i(tag, ""+position);
+		
+		if (position == 0) {
+			newIcon = R.drawable.profilegray ;
+		} 
+		if (position == 1) {
+			newIcon = R.drawable.globegray ;
+		} 
+		if (position == 2) {
+			newIcon = R.drawable.localgray ;
+		} 
+		if (position == 3) {
+			newIcon = R.drawable.votegray ;
+		} 
+		
+		if ( newIcon != 0) {
+			actionBar.getTabAt(position).setIcon(newIcon);
+		}
+    	
     }
 
 }

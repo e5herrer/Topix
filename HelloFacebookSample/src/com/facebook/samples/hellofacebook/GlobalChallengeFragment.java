@@ -6,12 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,6 +35,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	private static String tag = "ChallengeFragment";
 	private DBHelper db = new DBHelper(); 
 	public TextView challengeText;
+	public TextView titleText; 
 	
 	private static final String TAG = "CallCamera";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 99;
@@ -43,7 +43,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 		
 	Uri fileUri = null;
 	ImageView photoImage = null;
-	
+
 	int enablebuttonselector = 0;
     Button ib;
     
@@ -56,13 +56,20 @@ public class GlobalChallengeFragment extends SherlockFragment {
         View rootView = inflater.inflate(R.layout.fragment_global, container, false);
         
         challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
+        titleText = (TextView) rootView.findViewById(R.id.challengeTitleHolder);
+        
+        Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
+        
+        titleText.setTypeface(tf);
+        
         
         RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
         latestChallengeTask.execute();
  
         //initialize top photos
         gridview = (GridView) rootView.findViewById(R.id.top_photos_gridview); //almost like original code but since its a fragment need to call on the rooview 
-
+        gridview.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        
         
         ib = (Button) rootView.findViewById(R.id.imageButton1);
         ib.setOnClickListener(new View.OnClickListener() {
@@ -256,8 +263,10 @@ public class GlobalChallengeFragment extends SherlockFragment {
         @Override
         protected void onPostExecute(Challenge challenge) {
         	if(challenge != null) { 
-	        	t.setText("Title: " + challenge.getTitle() + "\n" +
-	        			"Description " + challenge.getDescription());
+	        	
+        		challengeText.setText(challenge.getDescription());
+	        	
+	        	titleText.setText(challenge.getTitle().toLowerCase()); 
 	        	
 	        	todaysChallenge = challenge; 
 	        	

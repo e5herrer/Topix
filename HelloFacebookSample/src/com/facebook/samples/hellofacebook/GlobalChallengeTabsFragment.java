@@ -3,6 +3,7 @@ package com.facebook.samples.hellofacebook;
 import java.util.List;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
@@ -26,10 +27,12 @@ public class GlobalChallengeTabsFragment extends SherlockFragment {
         // Create Child Tab1
         mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Current"),
                 GlobalChallengeFragment.class, null);
- 
+        
         // Create Child Tab2
         mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("All"),
                 GlobalChallengesFragment.class, null);
+        
+        
         return mTabHost;
     }
  

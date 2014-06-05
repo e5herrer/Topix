@@ -47,7 +47,7 @@ public class TopPhotoAdapter extends BaseAdapter {
 			iview = new ImageView(context);
 			iview.setLayoutParams(new GridView.LayoutParams(230,300));
 			iview.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-			iview.setPadding(5, 5, 5, 5);
+			//iview.setPadding(5, 5, 5, 5);
 		} else {
 			iview = (ImageView) view;	
 		}

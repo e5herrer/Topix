@@ -98,7 +98,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 		    }
 		  }
 		  String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
-		  
+		  /*
 		  	if (enablebuttonselector == 1) {
 	        ib.setText("Share photo!");
 	        ib.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +113,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	            }
 	        });
 		  	}
-		  
+		  */
 		  return new File(directory.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
 		  
 		  
@@ -148,6 +148,19 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask();
 	        uploadPhotoTask.execute(encoded); 
 	      	
+	        ib.setText("Share photo!");
+	        ib.setOnClickListener(new View.OnClickListener() {
+
+	            @Override
+	            public void onClick(View v) {
+	            	 Intent i = new Intent(getActivity().getBaseContext(), FacebookPhotoUpload.class);
+	            	 i.putExtra("photofb", filepath);
+	            	 ib.setText("Take photo!");
+	            	 //Log.d("HERE IS THE MESSAGE", filepath);
+	                 startActivity(i);
+	            }
+	        });
+	        
 	        //bu.setEnabled(true);
 	       
 	      } else {

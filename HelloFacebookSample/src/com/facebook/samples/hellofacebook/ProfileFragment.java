@@ -9,7 +9,6 @@ import android.net.Uri;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,13 +35,14 @@ public class ProfileFragment extends SherlockFragment {
 	TextView challengeName;
 	TextView challengeDesc;
 	TextView challengeUpvotes;
+	GridView gridview;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 		
 		rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 		
-		personalPics = (ListView) rootView.findViewById(R.id.personal_gallery);
+		//personalPics = (ListView) rootView.findViewById(R.id.personal_gallery);
 		  
 	  
 		enlargedPic = (ImageView) rootView.findViewById(R.id.enlarged_personal); 
@@ -56,6 +56,7 @@ public class ProfileFragment extends SherlockFragment {
 		RenderChallengeTask rt = new RenderChallengeTask();
 		rt.execute();
      
+		gridview = (GridView) rootView.findViewById(R.id.photos_gridview_profile);
         challengeName.setText("This is the challengeName");
         challengeDesc.setText("this will be a desc");
         challengeUpvotes.setText("47 Upvotes");
@@ -70,10 +71,8 @@ public class ProfileFragment extends SherlockFragment {
     
     
     private class RenderPersonalAlbum extends AsyncTask<String, String, TopixPhoto[]> {
-    	ListView gallery;
-    	RenderPersonalAlbum(ListView g) {
-    		this.gallery = g;
-    	}
+    	
+    	//GridView gridProfile;
  
     	@Override
 		protected TopixPhoto[] doInBackground(String ...params) {
@@ -85,15 +84,14 @@ public class ProfileFragment extends SherlockFragment {
     			return;
     		}
 			Log.d("RenderPersonalAlbum", "checkpoint 2");
-			Picasso.with(getActivity().getBaseContext()) 
-	        .load(result[0].getURL()) 
-	        .into(enlargedPic);
+			final TopPhotoAdapter gridAdapter = new TopPhotoAdapter(getActivity().getBaseContext(), result); //same need to call on rootview for context
+			gridview.setAdapter(gridAdapter);
 			challengeName.setText("Challenge: " + result[0].getChallenge()); 
 			challengeDesc.setText("Description: " + result[0].getDescription());
 			challengeUpvotes.setText("Likes: "+ result[0].getUpVotes());
 
-			this.gallery.setAdapter(new MyPictureAdapter(getActivity().getBaseContext(), result));
-	        this.gallery.setOnItemClickListener(new OnItemClickListener() {
+			
+	        gridview.setOnItemClickListener(new OnItemClickListener() {
 	        	@Override
 	        	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 	        		 Picasso.with(getActivity().getBaseContext()) 
@@ -121,7 +119,7 @@ public class ProfileFragment extends SherlockFragment {
         @Override
         protected void onPostExecute(Challenge challenge) {
         	if(challenge != null) { 
-        		RenderPersonalAlbum album = new RenderPersonalAlbum(personalPics);
+        		RenderPersonalAlbum album = new RenderPersonalAlbum();
                 album.execute();
              
         	}

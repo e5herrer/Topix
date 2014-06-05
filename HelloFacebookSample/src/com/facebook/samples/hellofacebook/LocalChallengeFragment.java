@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,7 +19,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 public class LocalChallengeFragment extends Fragment {
 
@@ -37,7 +37,7 @@ public class LocalChallengeFragment extends Fragment {
 	private LocationListener locationListener = null;
 	DBHelper db = new DBHelper();
 
-	//private EditText editLocation = null;
+	public TextView currentLocation;
 	Button newChallenge;
 	Button getChallenges;
 		
@@ -63,6 +63,12 @@ public class LocalChallengeFragment extends Fragment {
 
 		listView = (ListView) rootView
 				.findViewById(R.id.challengeList);
+		
+		currentLocation = (TextView) rootView.findViewById(R.id.cityName_local);
+		
+		Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
+        
+        currentLocation.setTypeface(tf);
 
 		//new challenge button
 		newChallenge = (Button) rootView.findViewById(R.id.btnNewLocChallenge);
@@ -218,15 +224,16 @@ public class LocalChallengeFragment extends Fragment {
 			GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
 			t.execute("" + loc.getLongitude(), "" + loc.getLatitude());
 
+			
+			/*
 			Toast.makeText(
 					getActivity().getBaseContext(),
 					"Location changed : Lat: " + loc.getLatitude() + " Lng: "
 							+ loc.getLongitude(), Toast.LENGTH_SHORT).show();
+			*/
 			
 			String longitude = "" + loc.getLongitude();
-			Log.v(TAG, longitude);
 			String latitude = "" +  loc.getLatitude();
-			Log.v(TAG, latitude);
 
 			myLongitude.setText(longitude);
 			myLatitude.setText(latitude);
@@ -235,22 +242,16 @@ public class LocalChallengeFragment extends Fragment {
 			String cityName = null;
 			Geocoder gcd = new Geocoder(getActivity().getBaseContext(),
 					Locale.getDefault());
-			Log.d("here", "here1");
 			List<Address> addresses;
-			Log.d("here", "here2");
 			try {
 				addresses = gcd.getFromLocation(loc.getLatitude(),
 						loc.getLongitude(), 1);
-				Log.d("here", "here3");
 				if (addresses.size() > 0)
 					cityName = addresses.get(0).getLocality();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			//String s = longitude + "\n" + latitude
-			//		+ "\n\nMy Currrent City is: " + cityName;
-			//editLocation.setText(s);
 		}
 
 		@Override

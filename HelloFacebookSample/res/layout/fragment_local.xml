@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    
- android:orientation="vertical"  
- android:layout_width="fill_parent"  
- android:layout_height="fill_parent"  
- android:background="@drawable/background9"
- android:weightSum="1">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:weightSum="1" >
 
     <EditText
         android:id="@+id/myLong"
@@ -27,36 +26,30 @@
      android:visibility="gone" >
   
   <requestFocus></requestFocus>  
- </EditText>  
+ </EditText>
 
- <LinearLayout
-     android:id="@+id/layButtonH"
-     android:layout_width="fill_parent"
+ <TextView
+     android:id="@+id/cityName_local"
+     android:layout_width="wrap_content"
+     android:layout_height="45dp"
+     android:layout_weight="0.13"
+     android:gravity="center_horizontal"
+     android:text="City Name Here" />
+
+ <com.facebook.samples.hellofacebook.FButton
+     android:id="@+id/btnNewLocChallenge"
+     android:layout_width="250dp"
      android:layout_height="wrap_content"
-     android:layout_weight="0.08"
-     android:gravity="center" >
-
-     <TextView
-         android:id="@+id/cityName_local"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         
-         android:text="City Name Here" />
-
-      <com.facebook.samples.hellofacebook.FButton
-          android:id="@+id/btnNewLocChallenge"
-          android:layout_width="250dp"
-          android:layout_height="45dp"
-          android:text="New Challenge"
-          fbutton:buttonColor="@color/fbutton_color_emerald" />
-   
- </LinearLayout>
+     android:layout_marginBottom="10dp"
+     android:layout_marginTop="20dp"
+     android:text="New Challenge"
+     fbutton:buttonColor="@color/TOPIX_RED" />
 
  <ListView
      android:id="@+id/challengeList"
      android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:layout_weight="0.13" >
+     android:layout_height="fill_parent" >
+
  </ListView>
  
 </LinearLayout>  

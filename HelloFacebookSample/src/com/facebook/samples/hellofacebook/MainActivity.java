@@ -1,6 +1,7 @@
 package com.facebook.samples.hellofacebook;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.facebook.samples.hellofacebook.TabsPagerAdapter;
 import com.facebook.samples.hellofacebook.R;
 
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,6 +44,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         Log.d("here1", "1");
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
+        
+
         actionBar = getActionBar();
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(mAdapter);
@@ -129,6 +133,16 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     	super.onActivityResult(requestCode, resultCode, data);
 	}
  
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ( keyCode == KeyEvent.KEYCODE_MENU ) {
+            Log.d("MENU BUTTON PRESSED", "MENU pressed");
+            //this.openContextMenu(view);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
     }

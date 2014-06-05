@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TabHost.OnTabChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
  
@@ -31,8 +32,26 @@ public class GlobalChallengeTabsFragment extends SherlockFragment {
         // Create Child Tab2
         mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("All"),
                 GlobalChallengesFragment.class, null);
-        
-        
+        for (int i = 0; i < mTabHost.getTabWidget().getChildCount(); i++) {
+            mTabHost.getTabWidget().getChildAt(i)
+                    .setBackgroundColor(Color.parseColor("#D11919")); // unselected
+        }
+        //mTabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#EF002A"));;
+        mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
+
+            @Override
+            public void onTabChanged(String tabId) {
+
+                for (int i = 0; i < mTabHost.getTabWidget().getChildCount(); i++) {
+                    mTabHost.getTabWidget().getChildAt(i)
+                            .setBackgroundColor(Color.parseColor("#D11919")); // unselected
+                }
+                mTabHost.getTabWidget().getChildAt(mTabHost.getCurrentTab())
+                        .setBackgroundColor(Color.parseColor("#DB4D4D")); // selected
+
+            }
+            
+        });
         return mTabHost;
     }
  

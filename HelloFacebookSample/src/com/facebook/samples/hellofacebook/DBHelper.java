@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -166,10 +167,23 @@ public class DBHelper {
 		return retChallenges;
 	}
 	
-	public Challenge [] getUserSpecifiedChallenges(String cityName) {
+	public Challenge [] getUserSpecifiedChallenges(String placeName) {
 		Challenge [] retChallenges = null;
+		String city = placeName.trim().split(",")[0];
+		String stateAndCountryString = placeName.split(",")[1].trim();
+		String state = stateAndCountryString.split(" ")[0];
+		String country = stateAndCountryString.split(" ")[1];
+		
 		try {
-			String response = getHttpRequest(DBHelper.localChallengeURL, "?city=", cityName);
+			city = URLEncoder.encode(city, "UTF-8");
+			state = URLEncoder.encode(state, "UTF-8");
+			country = URLEncoder.encode(country, "UTF-8");
+
+		} catch (UnsupportedEncodingException e) {
+			Log.e("getLocalChallenge", "Parameters couldn't be encoded: " + e.getMessage());
+		}
+		try {
+			String response = getHttpRequest(DBHelper.localChallengeURL, "city=" + city, "state=" + state, "country="+country);
 			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {

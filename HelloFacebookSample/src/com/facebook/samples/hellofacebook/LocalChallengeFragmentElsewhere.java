@@ -58,8 +58,8 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 		
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		
-        alert.setTitle("Location");
-        alert.setMessage("Please Enter a City");
+        alert.setTitle("Please Enter Location");
+        alert.setMessage("City, State Country");
 
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);

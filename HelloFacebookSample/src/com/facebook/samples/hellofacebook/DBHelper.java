@@ -65,8 +65,11 @@ public class DBHelper {
 	}
 	
 	private String getHttpRequest(String url, String ... params) throws ClientProtocolException, IOException {
-		DefaultHttpClient client = new DefaultHttpClient(); 
-		String parameters = "?" + TextUtils.join("&", params);
+		DefaultHttpClient client = new DefaultHttpClient();
+		String parameters = "";
+		if (params.length > 0) {
+			parameters = "?" + TextUtils.join("&", params);
+		}
 		Log.i("HTTP GET request url", url + parameters);
 		HttpGet httpGet = new HttpGet(url + parameters);
 		HttpResponse execute = client.execute(httpGet);
@@ -127,7 +130,7 @@ public class DBHelper {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.globalChallengesURL);
-			JSONArray challengesJSON = new JSONArray(response);
+			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {
 				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
@@ -147,7 +150,7 @@ public class DBHelper {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
-			JSONArray challengesJSON = new JSONArray(response);
+			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {
 				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
@@ -167,7 +170,7 @@ public class DBHelper {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "?city=", cityName);
-			JSONArray challengesJSON = new JSONArray(response);
+			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {
 				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
@@ -226,7 +229,7 @@ public class DBHelper {
 	public TopixPhoto[] getTopPhotos(Challenge topChallenge, String... params) {
 		TopixPhoto [] topPhotos = null;
 		try {
-			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/top?number=" + numPhotos);
+			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/top","number=" + numPhotos);
 			Log.d("check1", "check0");
 			JSONObject responseJSON = null;
 			JSONArray photosJSON = null;
@@ -241,7 +244,7 @@ public class DBHelper {
 			for (int i = 0; i < photosJSON.length(); i++) {
 				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
 				int photoID = photoJSON.getInt("id"); 
-				String photoURL = photosJSON.getJSONObject(i).getJSONObject("photo").getString("url");
+				String photoURL = photoJSON.getString("image");
 				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
 			}
 		} catch (Exception e) {
@@ -292,7 +295,7 @@ public class DBHelper {
 			for (int i = 0; i < photosJSON.length(); i++) {
 				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
 				int photoID = photoJSON.getInt("id"); 
-				String photoURL = photoJSON.getString("url");
+				String photoURL = photoJSON.getString("image");
 				topPhotos[i] = new TopixPhoto(photoID, photoURL); 
 				
 			}
@@ -344,17 +347,17 @@ public class DBHelper {
 			for (int i = 0; i < photosJSON.length(); i++) {				
 				JSONObject photoJSON = photosJSON.getJSONObject(i).getJSONObject("photo");
 				int photoID = photoJSON.getInt("id"); 
-				String photoURL = photoJSON.getString("url");
-				JSONObject challengeJSON = photoJSON.getJSONObject("challenge");
+				String photoURL = photoJSON.getString("image");
+				JSONObject challengeJSON = photosJSON.getJSONObject(i).getJSONObject("challenge");
 				String challengeTitle = challengeJSON.getString("title");
 				String challengeDesc = challengeJSON.getString("description");
-				JSONObject votesJSON = photoJSON.getJSONObject("votes");
+				JSONObject votesJSON = photosJSON.getJSONObject(i).getJSONObject("votes");
 				int upVotes = votesJSON.getInt("likes"); 
 				TopixPhoto photo = new TopixPhoto(photoID, photoURL, challengeTitle, challengeDesc, upVotes);
 				topPhotos[i] = photo; 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.d("getPersonalPhotos", "HTTP Request failed:" + e.getMessage());
 		}
 		return topPhotos;
 	}

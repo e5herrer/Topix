@@ -172,7 +172,9 @@ public class DBHelper {
 		String city = placeName.trim().split(",")[0];
 		String stateAndCountryString = placeName.split(",")[1].trim();
 		String state = stateAndCountryString.split(" ")[0];
-		String country = stateAndCountryString.split(" ")[1];
+		String country = stateAndCountryString.split("  ")[1];
+		//String countrymerged = 
+		Log.d("COUNTRY", country);
 		
 		try {
 			city = URLEncoder.encode(city, "UTF-8");

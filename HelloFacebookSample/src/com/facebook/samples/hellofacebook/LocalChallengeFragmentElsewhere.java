@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -36,7 +37,7 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 	DBHelper db = new DBHelper();
 	
 	ListView listView;
-	EditText myCity;
+	//EditText myCity;
 	TextView myHeader;
 	Button fetchChallenges;
 
@@ -50,8 +51,46 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 		listView = (ListView) rootView
 				.findViewById(R.id.semiLocalChallengeList);
 		
-		myCity = (EditText) rootView.findViewById(R.id.localCityName);
+		//myCity = (EditText) rootView.findViewById(R.id.localCityName);
 		
+		
+		//
+		
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		
+        alert.setTitle("Location");
+        alert.setMessage("Please Enter a City");
+
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText cityBox = new EditText(getActivity());
+        cityBox.setHint("City");
+        layout.addView(cityBox);
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int whichButton) {
+        	String cityContents = cityBox.getText().toString(); 
+        	        	
+        	GetCityChallengeTask t = new GetCityChallengeTask();
+			t.execute(cityContents);
+          		
+          }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int whichButton) {
+            // Canceled.
+          }
+        });
+
+        alert.show();
+
+		
+		
+		//
 		TextView header = (TextView) rootView.findViewById(R.id.localChallengeElseHeader);
 				
 		Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
@@ -59,7 +98,7 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
         header.setTypeface(tf);
 
 		//new challenge button
-		fetchChallenges = (Button) rootView.findViewById(R.id.localFetchButton);
+		/*fetchChallenges = (Button) rootView.findViewById(R.id.localFetchButton);
 		fetchChallenges.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -67,7 +106,7 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 				GetCityChallengeTask t = new GetCityChallengeTask();
 				t.execute(myCity.getText().toString());
 			}
-		});
+		});*/
 		
 
 		return rootView;

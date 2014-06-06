@@ -59,6 +59,7 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		
 		
+		
         alert.setTitle("Please Enter Location");
         alert.setMessage("City, State Country");
 

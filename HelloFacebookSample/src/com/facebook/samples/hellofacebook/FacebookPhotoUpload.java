@@ -67,7 +67,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
 
     
     private Button postPhotoButton;
-    private LoginButton loginButton;
+    //private LoginButton loginButton;
     private ProfilePictureView profilePictureView;
     private TextView greeting;
     private PendingAction pendingAction = PendingAction.NONE;
@@ -132,19 +132,6 @@ public class FacebookPhotoUpload extends FragmentActivity {
         setContentView(R.layout.main);
         
 
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-            @Override
-            public void onUserInfoFetched(GraphUser user) {
-                FacebookPhotoUpload.this.user = user;
-                updateUI();
-                // It's possible that we were waiting for this.user to be populated in order to post a
-                // status update.
-                handlePendingAction();
-            }
-        });
-        
-        //loginButton.performClick();
         
         //camera on create
         
@@ -326,7 +313,7 @@ public class FacebookPhotoUpload extends FragmentActivity {
         if (enableButtons && user != null) {
             profilePictureView.setProfileId(user.getId());
 			//db.getLatestChallenge(greeting); 
-            greeting.setText("Hello, " + user.getFirstName() + " \nConfirm photo to post");
+            greeting.setText(user.getFirstName() + ", confirm photo post");
         } else {
             profilePictureView.setProfileId(null);
             greeting.setText(null);

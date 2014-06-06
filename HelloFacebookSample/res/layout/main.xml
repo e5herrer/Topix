@@ -20,14 +20,14 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:background="@drawable/background9"
+           
         >
 
     <LinearLayout
         android:id="@+id/main_ui_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#FFF"
+        
         android:orientation="vertical" >
 
         <LinearLayout
@@ -42,15 +42,14 @@
                 android:gravity="center_horizontal"
                 facebook:preset_size="normal" >
             </com.facebook.widget.ProfilePictureView>
-
-            <com.facebook.widget.LoginButton
-                android:id="@+id/login_button"
+			  <TextView
+                android:id="@+id/greeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_marginTop="5dp"
-                facebook:confirm_logout="false"
-                facebook:fetch_user_info="true" />
+                android:textColor="#333"
+                android:textSize="18sp" />
+            
 
         </LinearLayout>
 
@@ -61,12 +60,7 @@
             android:layout_weight="0.52"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/greeting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#333"
-                android:textSize="18sp" />
+          
 
             <ImageView
                 android:id="@+id/photo_image"

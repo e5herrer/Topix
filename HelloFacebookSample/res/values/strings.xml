@@ -40,4 +40,6 @@
     <string name="steplabel">"Step "</string>
     <string name="title_activity_new_challenge">NewChallenge</string>
     <string name="title_activity_local_challenge_selected">LocalChallengeSelected</string>
+    <string name="title_activity_global_challenges_selected">GlobalChallengesSelected</string>
+
 </resources>

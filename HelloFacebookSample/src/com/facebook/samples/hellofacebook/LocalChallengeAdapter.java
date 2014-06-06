@@ -31,7 +31,7 @@ public class LocalChallengeAdapter extends ArrayAdapter<Challenge> {
             
 	    TextView textView = (TextView) row.findViewById(R.id.txtTitle);
 	    
-	    textView.setText(challenges[position].getDescription());
+	    textView.setText(challenges[position].getTitle());
         
         return row;
     }

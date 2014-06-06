@@ -66,6 +66,10 @@
             android:name="com.facebook.samples.hellofacebook.LocalChallengeSelected"
             android:label="@string/title_activity_local_challenge_selected" >
         </activity>
+        <activity
+            android:name="com.facebook.samples.hellofacebook.GlobalChallengesSelected"
+            android:label="@string/title_activity_global_challenges_selected" >
+        </activity>
     </application>
 
 </manifest>

@@ -6,7 +6,6 @@
  android:orientation="vertical"  
  android:layout_width="fill_parent"  
  android:layout_height="fill_parent"  
- android:background="@drawable/background9"
  android:weightSum="1">  
 
  <LinearLayout
@@ -19,11 +18,21 @@
    
  </LinearLayout>
 
+  <TextView
+     android:id="@+id/challengesTtle"
+     android:layout_width="match_parent"
+     android:layout_height="150px"
+     android:textSize="25sp"
+     android:text="Previous Challenges"
+     android:textStyle="bold|italic"
+     android:gravity="center_horizontal|center_vertical"
+     android:layout_above="@+id/challengeList">
+  </TextView>
  <ListView
-     android:id="@+id/challengeList"
+     android:id="@id/challengeList"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:layout_weight="0.13" >
+      >
  </ListView>
  
 </LinearLayout>  

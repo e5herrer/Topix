@@ -74,7 +74,7 @@ public class GlobalChallengesFragment extends Fragment {
 			listView.setOnItemClickListener(new OnItemClickListener() { 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent i = new Intent(getActivity(), LocalChallengeSelected.class); 
+						Intent i = new Intent(getActivity(), GlobalChallengesSelected.class); 
 						i.putExtra("challenge", challenges[position]); 
 						startActivity(i); 
 					}

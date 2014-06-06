@@ -18,18 +18,9 @@
    
  </LinearLayout>
 
-  <TextView
-     android:id="@+id/challengesTtle"
-     android:layout_width="match_parent"
-     android:layout_height="150px"
-     android:textSize="25sp"
-     android:text="Previous Challenges"
-     android:textStyle="bold|italic"
-     android:gravity="center_horizontal|center_vertical"
-     android:layout_above="@+id/challengeList">
-  </TextView>
+
  <ListView
-     android:id="@id/challengeList"
+     android:id="@+id/challengeList"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
       >

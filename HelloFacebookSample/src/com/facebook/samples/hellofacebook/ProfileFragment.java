@@ -1,18 +1,38 @@
 package com.facebook.samples.hellofacebook;
 
+import java.util.Arrays;
+
 import org.json.JSONObject;
 
 import com.squareup.picasso.Picasso;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphPlace;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.LoginButton;
+import com.facebook.widget.PickerFragment;
+import com.facebook.widget.PlacePickerFragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +42,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
@@ -29,7 +50,7 @@ import android.widget.TextView;
  
 public class ProfileFragment extends SherlockFragment {
 	DBHelper db = new DBHelper();
- 
+	
 	View rootView;
 	ListView personalPics;
 	ImageView enlargedPic;
@@ -37,10 +58,14 @@ public class ProfileFragment extends SherlockFragment {
 	TextView challengeUpvotes;
 	TextView challengeLikes;
 	GridView gridview;
+	LoginButton loginButton;
+
+	    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-		
+    	
+        
 		rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 		
 		//personalPics = (ListView) rootView.findViewById(R.id.personal_gallery);
@@ -72,6 +97,16 @@ public class ProfileFragment extends SherlockFragment {
 			enlargedPic.setPadding(5, 5, 5, 5); 
         }  
         	
+        loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Log.d("WE ARE IN SETTINGS", "SETTINGS");
+                Intent i = new Intent(getActivity(), LoginActivity.class);
+            	//i.putExtra("id", position);
+            	startActivity(i); 
+            }
+        });
+
        return rootView;
 	}
     
@@ -135,5 +170,7 @@ public class ProfileFragment extends SherlockFragment {
         		
         }
     } 
+    
+
     
 }

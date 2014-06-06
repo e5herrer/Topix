@@ -36,7 +36,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private ActionBar actionBar;
     private static String tag = "MainActivity";
     // Tab titles
-    private String[] tabs = { "Profile", "Global Challenges", "Local Challenges", "Competitors", "Settings" };
+    private String[] tabs = { "Profile", "Global Challenges", "Local Challenges", "Competitors" };
     private int y1, y2; //used to detect up and down swipes
     
     @Override
@@ -113,8 +113,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 			return R.drawable.localgray;
 		} else if (tab_name.equals("Competitors")){
 			return R.drawable.votegray;
-		} else if (tab_name.equals("Settings")){
-			return R.drawable.configuration;
 		} else {
 			return R.drawable.star;
 		}
@@ -160,15 +158,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     	super.onActivityResult(requestCode, resultCode, data);
 	}
  
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ( keyCode == KeyEvent.KEYCODE_MENU ) {
-            Log.d("MENU BUTTON PRESSED", "MENU pressed");
-            //this.openContextMenu(view);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+  
     
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {

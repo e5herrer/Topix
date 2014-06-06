@@ -139,12 +139,6 @@ public class LoginActivity extends FragmentActivity {
     
     
     
-    public void mockLogin(View view){
-      	//Intent i = new Intent(getApplicationContext(), MainActivity.class);
-      	//i.putExtra("loggedin", true);
-      	//startActivity(i);
-      	finish();
-	  }
     @Override
     protected void onResume() {
         super.onResume();

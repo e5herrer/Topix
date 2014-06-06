@@ -26,7 +26,7 @@ public class GlobalChallengeTabsFragment extends SherlockFragment {
         mTabHost.setup(getSherlockActivity(), getChildFragmentManager(), R.layout.fragment_challenge);
  
         // Create Child Tab1
-        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Current"),
+        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Today"),
                 GlobalChallengeFragment.class, null);
         
         // Create Child Tab2

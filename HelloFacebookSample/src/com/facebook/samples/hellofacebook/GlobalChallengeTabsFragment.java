@@ -32,11 +32,15 @@ public class GlobalChallengeTabsFragment extends SherlockFragment {
         // Create Child Tab2
         mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("All"),
                 GlobalChallengesFragment.class, null);
+        
         for (int i = 0; i < mTabHost.getTabWidget().getChildCount(); i++) {
             mTabHost.getTabWidget().getChildAt(i)
                     .setBackgroundColor(Color.parseColor("#D11919")); // unselected
         }
-        //mTabHost.getTabWidget().getChildAt(0).setBackgroundColor(Color.parseColor("#EF002A"));;
+        
+        mTabHost.getTabWidget().getChildAt(mTabHost.getCurrentTab())
+        .setBackgroundColor(Color.parseColor("#DB4D4D")); // selected
+        
         mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 
             @Override

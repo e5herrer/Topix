@@ -39,6 +39,8 @@ public class DBHelper {
 	public final static String randomImageFromChallengeURL_TAIL = "/photos/random";
 	private static final String globalChallengesURL = serverRoot + "api/challenges/";
 	
+	private final static int numPhotos = 9;
+	
 	private String postHttpRequest(String url, JSONObject data) throws ClientProtocolException, IOException {
 		DefaultHttpClient client = new DefaultHttpClient(); 
 		Log.i("HTTP POST request url", url);
@@ -105,6 +107,7 @@ public class DBHelper {
 			innerJSON.put("description", desc);
 			innerJSON.put("longitude", longitude);
 			innerJSON.put("latitude", latitude); 
+			innerJSON.put("type", "local");
 			outerJSON.put("challenge", innerJSON);
 		} catch (JSONException e1) {
         	Log.e("submitLocalChallenge", "Malformed JSON");
@@ -144,6 +147,26 @@ public class DBHelper {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
+			JSONArray challengesJSON = new JSONArray(response);
+			retChallenges = new Challenge[challengesJSON.length()];
+			for(int i = 0; i < challengesJSON.length() ; i++) {
+				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
+				int id = challengeJSON.getInt("id");
+				String title = challengeJSON.getString("title");
+				String desc = challengeJSON.getString("description");
+				retChallenges[i] = new Challenge(id, title, desc);
+			}
+		} catch (Exception e) {
+			Log.d("getLocalChallenge", "HTTP Request failed:" + e.getMessage());
+		}
+		
+		return retChallenges;
+	}
+	
+	public Challenge [] getUserSpecifiedChallenges(String cityName) {
+		Challenge [] retChallenges = null;
+		try {
+			String response = getHttpRequest(DBHelper.localChallengeURL, "?city=", cityName);
 			JSONArray challengesJSON = new JSONArray(response);
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {
@@ -203,7 +226,7 @@ public class DBHelper {
 	public TopixPhoto[] getTopPhotos(Challenge topChallenge, String... params) {
 		TopixPhoto [] topPhotos = null;
 		try {
-			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/");
+			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/top?number=" + numPhotos);
 			Log.d("check1", "check0");
 			JSONObject responseJSON = null;
 			JSONArray photosJSON = null;

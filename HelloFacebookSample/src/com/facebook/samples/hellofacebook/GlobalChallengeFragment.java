@@ -34,7 +34,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class GlobalChallengeFragment extends SherlockFragment {
 	private static String tag = "ChallengeFragment";
 	private DBHelper db = new DBHelper(); 
-	public TextView challengeText;
 	public TextView titleText; 
 	
 	private static final String TAG = "CallCamera";
@@ -55,7 +54,6 @@ public class GlobalChallengeFragment extends SherlockFragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_global, container, false);
         
-        challengeText = (TextView)rootView.findViewById(R.id.challengeHolder);
         titleText = (TextView) rootView.findViewById(R.id.challengeTitleHolder);
         
         Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
@@ -63,7 +61,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
         titleText.setTypeface(tf);
         
         
-        RenderChallengeTask latestChallengeTask = new RenderChallengeTask(challengeText);
+        RenderChallengeTask latestChallengeTask = new RenderChallengeTask();
         latestChallengeTask.execute();
  
         //initialize top photos
@@ -264,10 +262,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     
     
     private class RenderChallengeTask extends AsyncTask<String, Void, Challenge> {		
-		TextView t; 
-		private RenderChallengeTask(TextView v) {
-			t = v; 
-		}
+
         @Override
         protected Challenge doInBackground(String... urls) {
         	return db.getLatestChallenge(urls);
@@ -277,9 +272,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
         protected void onPostExecute(Challenge challenge) {
         	if(challenge != null) { 
 	        	
-        		challengeText.setText(challenge.getDescription());
-	        	
-	        	titleText.setText(challenge.getTitle().toLowerCase()); 
+        		titleText.setText(challenge.getTitle().toLowerCase()); 
 	        	
 	        	todaysChallenge = challenge; 
 	        	

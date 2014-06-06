@@ -24,7 +24,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter{
         case 2:
         	return new LocalChallengeTabsFragment();
         case 3:
-        	return new CompetitorFragment();
+        	return new GlobalCompetitorFragment();
         case 4:
             return new SettingsFragment();
         }

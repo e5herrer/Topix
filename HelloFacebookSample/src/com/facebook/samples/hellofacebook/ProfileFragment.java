@@ -34,7 +34,6 @@ public class ProfileFragment extends SherlockFragment {
 	ListView personalPics;
 	ImageView enlargedPic;
 	TextView challengeName;
-	TextView challengeDesc;
 	TextView challengeUpvotes;
 	TextView challengeLikes;
 	GridView gridview;
@@ -48,8 +47,7 @@ public class ProfileFragment extends SherlockFragment {
 		  
 	  
 		enlargedPic = (ImageView) rootView.findViewById(R.id.enlarged_personal); 
-		this.challengeName = (TextView) rootView.findViewById(R.id.challenge_desc);
-		this.challengeDesc = (TextView) rootView.findViewById(R.id.challenge_name);
+		this.challengeName = (TextView) rootView.findViewById(R.id.challenge_name);
 		this.challengeUpvotes = (TextView) rootView.findViewById(R.id.challenge_upvote_count);
         challengeLikes = (TextView) rootView.findViewById(R.id.challenge_upvotes);
 		
@@ -67,7 +65,6 @@ public class ProfileFragment extends SherlockFragment {
      
 		gridview = (GridView) rootView.findViewById(R.id.photos_gridview_profile);
         challengeName.setText("This is the challengeName");
-        challengeDesc.setText("this will be a desc");
         challengeUpvotes.setText("47 Upvotes");
 
 
@@ -101,7 +98,6 @@ public class ProfileFragment extends SherlockFragment {
 	        .into(enlargedPic);
 			
 			challengeName.setText("" + result[0].getChallenge()); 
-			challengeDesc.setText("" + result[0].getDescription());
 			challengeUpvotes.setText("" + result[0].getUpVotes());
 
 			
@@ -113,7 +109,6 @@ public class ProfileFragment extends SherlockFragment {
 	        	        .into(enlargedPic);
 	        		 
 	     			challengeName.setText("" + result[position].getChallenge().toLowerCase()); 
-	    			challengeDesc.setText("" + result[position].getDescription());
 	    			challengeUpvotes.setText("" + result[position].getUpVotes());
 	        	} 
 	        });

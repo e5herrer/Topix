@@ -28,6 +28,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 	private ImageView iview; 
 	private int y1, y2;
 	
+	boolean votedOnAllImages;
+	
 	private Challenge todaysChallenge;
 	
 	private int currentPhotoID; 
@@ -92,19 +94,29 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     
     //handle upvotes
     public void upvote(){
-    	Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
-    	VoteTask voteTask = new VoteTask(currentPhotoID); 
-    	voteTask.execute("up");
+    	if (!votedOnAllImages) {
+    		Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
+    		VoteTask voteTask = new VoteTask(currentPhotoID); 
+    		voteTask.execute("up");
+    		displayRandomImage();
+    	} else {
+    		Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
+    	}
+    	Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
     	Log.i(tag, "upvote");
-    	displayRandomImage();
+    	
     }
     
   //handle upvotes
     public void downvote() {
-    	Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
-    	VoteTask voteTask = new VoteTask(currentPhotoID); 
-    	voteTask.execute("down");
-    	displayRandomImage();
+    	if (!votedOnAllImages) {
+    		Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
+    		VoteTask voteTask = new VoteTask(currentPhotoID); 
+        	voteTask.execute("down");
+        	displayRandomImage();
+    	} else {
+    		Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
+    	}
     	Log.i(tag, "downvote");
     }
     
@@ -123,11 +135,13 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(TopixPhoto gotPhoto) {
 			if (gotPhoto != null) { 
+				votedOnAllImages = false;
 				Log.d("randomPhoto", gotPhoto.getURL());
 				Picasso.with(getActivity()).load(gotPhoto.getURL()).into(iview);
 				currentPhotoID = gotPhoto.getID();
 			} else {
-				iview.setImageResource(R.drawable.voting_instructions);
+				votedOnAllImages = true; 
+				iview.setImageResource(R.drawable.placeholder_voting_complete);
 			}
 		}
     	

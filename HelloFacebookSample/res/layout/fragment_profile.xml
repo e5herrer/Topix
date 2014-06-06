@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/TOPIX_BACKGROUND" >
+    android:layout_height="fill_parent" >
     
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
@@ -13,6 +12,15 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/challenge_name"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.79"
+                android:gravity="center_horizontal"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/enlarged_personal"
@@ -22,63 +30,28 @@
                 android:src="@drawable/agent" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_weight="0.79" >
-
-                <LinearLayout
-                    android:layout_width="225dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/challenge_name"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="0.79"
-                        android:gravity="center_horizontal"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-                    
-                    <TextView
-                        android:id="@+id/challenge_desc"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.79"
-                        android:gravity="center_horizontal"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-                    
-                    
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
 
                 <TextView
-                        android:id="@+id/challenge_upvote_count"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:gravity="center_horizontal"
-                        android:textColor="@color/TOPIX_RED"
-                        android:text="0"
-                        android:textSize="24sp" />
+                    android:id="@+id/challenge_upvote_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="0"
+                    android:textColor="@color/TOPIX_RED"
+                    android:textSize="24sp" />
 
-                    <TextView
-                        android:id="@+id/challenge_upvotes"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:gravity="center_horizontal"
-                        android:textColor="#FFFFFF"
-                        android:text="likes"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/challenge_upvotes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text=" likes"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
             </LinearLayout>
         </LinearLayout>
 

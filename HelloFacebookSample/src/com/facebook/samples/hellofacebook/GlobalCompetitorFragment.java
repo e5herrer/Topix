@@ -94,30 +94,31 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     
     //handle upvotes
     public void upvote(){
-    	if (!votedOnAllImages) {
-    		Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
-    		VoteTask voteTask = new VoteTask(currentPhotoID); 
-    		voteTask.execute("up");
-    		displayRandomImage();
-    	} else {
-    		Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
-    	}
-    	Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
-    	Log.i(tag, "upvote");
-    	
+    	VoteTask voteTask = new VoteTask(currentPhotoID); 
+    	voteTask.execute("up");
+        toastVote(!votedOnAllImages, "up");
+    	displayRandomImage();    	
     }
     
   //handle upvotes
     public void downvote() {
-    	if (!votedOnAllImages) {
-    		Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
-    		VoteTask voteTask = new VoteTask(currentPhotoID); 
-        	voteTask.execute("down");
-        	displayRandomImage();
+    	VoteTask voteTask = new VoteTask(currentPhotoID); 
+        voteTask.execute("down");
+        displayRandomImage();
+        toastVote(!votedOnAllImages, "down");
+    	Log.i(tag, "downvote");
+    }
+    
+    public void toastVote(boolean wasVotable, String voteVal) {
+    	if (wasVotable) {
+    		if (voteVal.equals("up")) {
+    			Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
+    		} else {
+    			Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
+    		}
     	} else {
     		Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();
     	}
-    	Log.i(tag, "downvote");
     }
     
     public void displayRandomImage() {

@@ -281,12 +281,11 @@ public class DBHelper {
 			JSONObject photoJSON = null;
 			try {
 				responseJSON = new JSONObject(response);
-				photoJSON = responseJSON.getJSONObject("photo");
 			} catch (JSONException e) {
 	        	Log.e("getTopPhotos", "Malformed JSON response: " + e.getMessage());
 	        	return null;
 			}
-			randomPhoto = new TopixPhoto(photoJSON.getInt("id"), photoJSON.getString("image"));
+			randomPhoto = new TopixPhoto(responseJSON.getInt("id"), responseJSON.getString("image"));
 		} catch (Exception e) {
 			Log.d("getRandomPhoto", "HTTP Request failed:" + e.getMessage());
 		}

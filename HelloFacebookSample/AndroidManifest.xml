@@ -70,6 +70,11 @@
             android:name="com.facebook.samples.hellofacebook.GlobalChallengesSelected"
             android:label="@string/title_activity_global_challenges_selected" >
         </activity>
+
+
+    
+
+    <meta-data android:name="com.crashlytics.ApiKey" android:value="54fc6ced70bbf49c52358b6e0f9f65accdefc6ad"/>
     </application>
 
 </manifest>

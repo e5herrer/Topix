@@ -68,29 +68,38 @@ public class DBHelper {
 	}
 	
 	public VoteWrapper [] getVoteHistory() {
-		VoteWrapper v [] = new VoteWrapper[6];
-		/*
+		VoteWrapper retVotes [] = null;
+		
 		try {
-			String response = getHttpRequest(DBHelper.voteHistoryURL);
-			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
-			retChallenges = new Challenge[challengesJSON.length()];
-			for(int i = 0; i < challengesJSON.length() ; i++) {
-				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
-				int id = challengeJSON.getInt("id");
-				String title = challengeJSON.getString("title");
-				String desc = challengeJSON.getString("description");
-				retChallenges[i] = new Challenge(id, title, desc);
+			String response = getHttpRequest(DBHelper.voteHistoryURL + Session.getActiveSession().getAccessToken());
+			Log.d("voteHistory", "URL : " + DBHelper.voteHistoryURL + Session.getActiveSession().getAccessToken());
+			Log.d("voteHistory", "RESPONSE L " + response);
+
+			JSONArray votesJSON = new JSONObject(response).getJSONArray("photos");
+			retVotes = new VoteWrapper[votesJSON.length()];
+			for(int i = 0; i < votesJSON.length() ; i++) {
+				JSONObject photoJSON = votesJSON.getJSONObject(i).getJSONObject("photo");
+				JSONObject challengeJSON = votesJSON.getJSONObject(i).getJSONObject("challenge");
+				String voteResult = votesJSON.getJSONObject(i).getString("vote");
+				
+				int imageID = photoJSON.getInt("id");
+				String challengeTitle = challengeJSON.getString("title"); 
+				String imageURL = photoJSON.getString("image");
+				
+				retVotes[i] = new VoteWrapper(imageID, voteResult, imageURL, challengeTitle);
 			}
+				
 		} catch (Exception e) {
 			Log.d("getGlobalChallenges", "HTTP Request failed:" + e.getMessage());
 		}
-		*/
-		
+
+		/*
 		for (int i = 0; i < 6; i++) {
 			v[i] = new VoteWrapper(1, "up", "http://i.imgur.com/CtnhjDB.jpg", "wow such title");
 		}
+		*/
 		
-		return v;
+		return retVotes;
 	}
 	
 	private String getHttpRequest(String url, String ... params) throws ClientProtocolException, IOException {

@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.27"
-            android:text="TRENDING" />
+            android:text="TRENDING NOW" />
 
         <GridView
             android:id="@+id/top_photos_gridview"

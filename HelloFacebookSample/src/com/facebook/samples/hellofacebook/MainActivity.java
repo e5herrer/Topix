@@ -27,6 +27,10 @@ import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.crashlytics.android.Crashlytics;
+import com.google.analytics.tracking.android.EasyTracker;
+
+
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
 
@@ -39,11 +43,18 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private String[] tabs = { "Profile", "Global Challenges", "Local Challenges", "Competitors" };
     private int y1, y2; //used to detect up and down swipes
     
+
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	Log.i(tag, "onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //crashalytics
+        Crashlytics.start(this);
+        //analytics
+        
+        Crashlytics.start(this);
+		setContentView(R.layout.activity_main);
         Log.d("here1", "1");
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -100,6 +111,18 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         //setting swipe gestures
         
         
+    }
+    
+    @Override
+    public void onStart() {
+      super.onStart();
+      EasyTracker.getInstance(this).activityStart(this);
+    }
+    
+    @Override
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance(this).activityStop(this);  // Add this method.
     }
  
     private int getIcon(String tab_name) {

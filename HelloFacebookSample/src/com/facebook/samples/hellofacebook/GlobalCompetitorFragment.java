@@ -112,9 +112,9 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     public void toastVote(boolean wasVotable, String voteVal) {
     	if (wasVotable) {
     		if (voteVal.equals("up")) {
-    			Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
-    		} else {
     			Toast.makeText(getActivity().getBaseContext(), "Upvoted!", Toast.LENGTH_SHORT).show();
+    		} else {
+    			Toast.makeText(getActivity().getBaseContext(), "Downvoted!", Toast.LENGTH_SHORT).show();
     		}
     	} else {
     		Toast.makeText(getActivity().getBaseContext(), "No more images, try again tomorrow!", Toast.LENGTH_SHORT).show();

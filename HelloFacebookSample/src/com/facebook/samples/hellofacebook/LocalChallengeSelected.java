@@ -49,7 +49,7 @@ public class LocalChallengeSelected extends Activity {
     Button bu;
     
     GridView gridview;
-	
+    Button ib;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class LocalChallengeSelected extends Activity {
     	Log.d("HERE IS THE MESSAGE", "fjdkf");
     	setContentView(R.layout.fragment_local_challenge_selected);
         
-        challengeText = (TextView)findViewById(R.id.challengeHolder_local);
+        challengeText = (TextView)findViewById(R.id.challengeTitleHolder_local);
         
         //db.getLatestChallenge(challengeText);
         
@@ -89,7 +89,7 @@ public class LocalChallengeSelected extends Activity {
         });
         
         
-        Button ib = (Button) findViewById(R.id.imageButton1_local);
+        ib = (Button) findViewById(R.id.imageButton1_local);
         ib.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -102,7 +102,7 @@ public class LocalChallengeSelected extends Activity {
     	        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
-         
+         /*
         bu = (Button) findViewById(R.id.postPhoto_local);
         bu.setEnabled(false);
         bu.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,7 @@ public class LocalChallengeSelected extends Activity {
             	 //Log.d("HERE IS THE MESSAGE", filepath);
                  startActivity(i);
             }
-        });
+        });*/
         
         
     }
@@ -164,7 +164,18 @@ public class LocalChallengeSelected extends Activity {
 		        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 		        UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(myLocalChallenge);
 		        uploadPhotoTask.execute(encoded); 
-		        bu.setEnabled(true);
+		        ib.setText("Share photo!");
+		        ib.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View v) {
+		            	 Intent i = new Intent(getBaseContext(), FacebookPhotoUpload.class);
+		            	 i.putExtra("photofb", filepath);
+		            	 ib.setText("Take photo!");
+		            	 //Log.d("HERE IS THE MESSAGE", filepath);
+		                 startActivity(i);
+		            }
+		        });
 		        displayTopPhotos();
 		       
 		      } else {

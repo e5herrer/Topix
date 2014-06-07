@@ -4,18 +4,20 @@ package com.facebook.samples.hellofacebook;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
- 
-import com.viewpagerindicator.CirclePageIndicator;
 
+import com.viewpagerindicator.CirclePageIndicator;
 import com.facebook.*;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
@@ -77,7 +79,7 @@ public class LoginActivity extends FragmentActivity {
     String[] population;
     int[] flag;
     CirclePageIndicator mIndicator;
-
+    TextView copyright;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,11 +93,19 @@ public class LoginActivity extends FragmentActivity {
             pendingAction = PendingAction.valueOf(name);
         
         }
-
+        
+        
+        //copyright.setText("Copyright Topix LLC");
+  
         // START HERE
         // Get the view from viewpager_main.xml
         setContentView(R.layout.activity_login);
 
+        copyright = (TextView) this.findViewById(R.id.textView_log);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf");
+        copyright.setText("Vote  Share  Win");
+        copyright.setAnimation(AnimationUtils.loadAnimation(LoginActivity.this, android.R.anim.slide_in_left));
+        copyright.setTypeface(tf);
         // Generate sample data
         rank = new String[] { "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
         					  "Nulla euismod placerat libero at fringilla.",

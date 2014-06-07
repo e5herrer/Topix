@@ -3,7 +3,7 @@
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background9"
+    android:background="@drawable/backg"
     android:orientation="vertical" >
     
 	<android.support.v4.view.ViewPager
@@ -16,6 +16,7 @@
         android:id="@+id/indicator"
         android:layout_width="fill_parent"
         android:padding="10dp"
+        android:paddingBottom="10dp"
         android:layout_height="10dp"
         android:layout_weight="0.02"  />
 
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
+        android:paddingTop="20dp"
         android:layout_weight="0.03"
         android:padding="10dp"
         facebook:confirm_logout="false"
@@ -36,10 +38,26 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textView_log"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:editable="true"
+            android:paddingTop="30dp"
+            android:text="hello"
+            android:textSize="20sp" />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10px">
+        </TextView>
     </LinearLayout>
  
 </LinearLayout>

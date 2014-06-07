@@ -88,19 +88,15 @@ public class LocalChallengeFragment extends Fragment {
 		        titleBox.setHint("Title");
 		        layout.addView(titleBox);
 
-		        final EditText descriptionBox = new EditText(getActivity());
-		        descriptionBox.setHint("Description");
-		        layout.addView(descriptionBox);
 
 		        alert.setView(layout);
 		
 		        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
 		        public void onClick(DialogInterface dialog, int whichButton) {
 		        	String titleContents = titleBox.getText().toString(); 
-		        	String dialogContents = descriptionBox.getText().toString();
 		        	
 		        	SubmitLocalChallengeTask submitLocal = new SubmitLocalChallengeTask();
-		        	submitLocal.execute(titleContents, dialogContents, myLongitude.getText().toString(), myLatitude.getText().toString()); 
+		        	submitLocal.execute(titleContents, "", myLongitude.getText().toString(), myLatitude.getText().toString()); 
 		          		
 		          }
 		        });
@@ -287,7 +283,7 @@ public class LocalChallengeFragment extends Fragment {
 	}
 
 	private class GetLocalChallengeTask extends
-			AsyncTask<String, String, Challenge[]> {
+			AsyncTask<String, String, LocalChallengeWrapper> {
 
 		ListView listView;
 
@@ -296,11 +292,16 @@ public class LocalChallengeFragment extends Fragment {
 		}
 
 		@Override
-		protected Challenge[] doInBackground(String... params) {
+		protected LocalChallengeWrapper doInBackground(String... params) {
 			return db.getNearbyChallenges(params[0], params[1]);
 		}
 
-		protected void onPostExecute(final Challenge[] challenges) {
+		protected void onPostExecute(final LocalChallengeWrapper localWrapper) {
+			
+			final Challenge [] challenges = localWrapper.getMyChallenges();
+			
+			currentLocation.setText(localWrapper.getMyCity());
+			
 			LocalChallengeAdapter adapter = new LocalChallengeAdapter(
 					getActivity().getBaseContext(),
 					R.layout.challenge_list_item_row, challenges);

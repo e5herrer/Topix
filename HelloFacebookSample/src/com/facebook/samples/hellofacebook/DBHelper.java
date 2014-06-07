@@ -147,12 +147,14 @@ public class DBHelper {
 		return retChallenges;
 	}
 
-	public Challenge [] getNearbyChallenges(String longitude, String latitude) {
-		Challenge [] retChallenges = null;
+	public LocalChallengeWrapper getNearbyChallenges(String longitude, String latitude) {
+		LocalChallengeWrapper retChallengeWrapper = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
-			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
-			retChallenges = new Challenge[challengesJSON.length()];
+			JSONObject resJSON = new JSONObject(response);
+			JSONArray challengesJSON = resJSON.getJSONArray("challenges");
+			String userCity = resJSON.getString("city");
+			Challenge [] retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {
 				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
 				int id = challengeJSON.getInt("id");
@@ -160,11 +162,13 @@ public class DBHelper {
 				String desc = challengeJSON.getString("description");
 				retChallenges[i] = new Challenge(id, title, desc);
 			}
+			
+			retChallengeWrapper = new LocalChallengeWrapper(retChallenges, userCity);
 		} catch (Exception e) {
 			Log.d("getLocalChallenge", "HTTP Request failed:" + e.getMessage());
 		}
 		
-		return retChallenges;
+		return retChallengeWrapper;
 	}
 	
 	public Challenge [] getUserSpecifiedChallenges(String cityName, String stateName, String countryName) {

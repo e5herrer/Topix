@@ -37,9 +37,10 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 	DBHelper db = new DBHelper();
 	
 	ListView listView;
-	//EditText myCity;
 	TextView myHeader;
 	Button fetchChallenges;
+	
+	String userCity;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,65 +51,64 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 
 		listView = (ListView) rootView
 				.findViewById(R.id.semiLocalChallengeList);
-		
-		//myCity = (EditText) rootView.findViewById(R.id.localCityName);
-		
-		
-		//
-		
-		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		
-		
-		
-        alert.setTitle("Please Enter Location");
-        alert.setMessage("City, State Country");
 
-        LinearLayout layout = new LinearLayout(getActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText cityBox = new EditText(getActivity());
-        cityBox.setHint("City");
-        layout.addView(cityBox);
-
-        alert.setView(layout);
-
-        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int whichButton) {
-        	String cityContents = cityBox.getText().toString(); 
-        	        	
-        	GetCityChallengeTask t = new GetCityChallengeTask();
-			t.execute(cityContents);
-          		
-          }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            // Canceled.
-          }
-        });
-
-        alert.show();
-
-		
-		
-		//
-		TextView header = (TextView) rootView.findViewById(R.id.localChallengeElseHeader);
+		myHeader = (TextView) rootView.findViewById(R.id.localChallengeElseHeader);
 				
 		Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Pacifico.ttf");
         
-        header.setTypeface(tf);
+        myHeader.setTypeface(tf);
 
-		//new challenge button
-		/*fetchChallenges = (Button) rootView.findViewById(R.id.localFetchButton);
+
+		fetchChallenges = (Button) rootView.findViewById(R.id.btnChoosePlace);
 		fetchChallenges.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				GetCityChallengeTask t = new GetCityChallengeTask();
-				t.execute(myCity.getText().toString());
+				AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+		        alert.setTitle("Please Enter Location");
+
+		        LinearLayout layout = new LinearLayout(getActivity());
+		        layout.setOrientation(LinearLayout.VERTICAL);
+
+		        final EditText cityBox = new EditText(getActivity());
+		        cityBox.setHint("City");
+		        layout.addView(cityBox);
+		        
+		        final EditText stateBox = new EditText(getActivity());
+		        stateBox.setHint("State");
+		        layout.addView(stateBox);
+		        
+		        final EditText countryBox = new EditText(getActivity());
+		        countryBox.setHint("Country");
+		        layout.addView(countryBox);
+
+		        alert.setView(layout);
+
+		        alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int whichButton) {
+		        	String cityContents = cityBox.getText().toString(); 
+		        	String stateContents =  stateBox.getText().toString(); 
+		        	String countryContents =  countryBox.getText().toString(); 
+		        	
+		        	userCity = cityContents;
+		        	        	
+		        	GetCityChallengeTask t = new GetCityChallengeTask();
+					t.execute(cityContents, stateContents, countryContents); 
+					
+					fetchChallenges.setVisibility(0);
+					myHeader.setVisibility(1);
+		          }
+		        });
+
+		        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		          public void onClick(DialogInterface dialog, int whichButton) {
+		          }
+		        });
+
+		        alert.show();
 			}
-		});*/
+		});
 		
 
 		return rootView;
@@ -131,7 +131,7 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 
 		@Override
 		protected Challenge[] doInBackground(String... params) {
-			return db.getUserSpecifiedChallenges(params[0]);
+			return db.getUserSpecifiedChallenges(params[0], params[1], params[2]);
 		}
 
 		protected void onPostExecute(final Challenge[] challenges) {
@@ -147,6 +147,8 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 						startActivity(i); 
 					}
 			}); 
+			
+			myHeader.setText("Challenges for " + userCity);
 		}
 	}
 			

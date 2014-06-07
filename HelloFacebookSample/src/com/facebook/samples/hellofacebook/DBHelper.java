@@ -167,25 +167,18 @@ public class DBHelper {
 		return retChallenges;
 	}
 	
-	public Challenge [] getUserSpecifiedChallenges(String placeName) {
+	public Challenge [] getUserSpecifiedChallenges(String cityName, String stateName, String countryName) {
 		Challenge [] retChallenges = null;
-		String city = placeName.trim().split(",")[0];
-		String stateAndCountryString = placeName.split(",")[1].trim();
-		String state = stateAndCountryString.split(" ")[0];
-		String country = stateAndCountryString.split("  ")[1];
 		//String countrymerged = 
-		Log.d("COUNTRY", country);
-		
 		try {
-			city = URLEncoder.encode(city, "UTF-8");
-			state = URLEncoder.encode(state, "UTF-8");
-			country = URLEncoder.encode(country, "UTF-8");
-
+			cityName = URLEncoder.encode(cityName, "UTF-8");
+			stateName = URLEncoder.encode(stateName, "UTF-8");
+			countryName = URLEncoder.encode(countryName, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			Log.e("getLocalChallenge", "Parameters couldn't be encoded: " + e.getMessage());
 		}
 		try {
-			String response = getHttpRequest(DBHelper.localChallengeURL, "city=" + city, "state=" + state, "country="+country);
+			String response = getHttpRequest(DBHelper.localChallengeURL, "city=" + cityName, "state=" + stateName, "country="+countryName);
 			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
 			retChallenges = new Challenge[challengesJSON.length()];
 			for(int i = 0; i < challengesJSON.length() ; i++) {

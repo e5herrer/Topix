@@ -6,16 +6,23 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
+    <com.facebook.samples.hellofacebook.FButton
+        android:id="@+id/btnChoosePlace"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="40dp"
+        android:text="Choose Place"
+        fbutton:buttonColor="@color/TOPIX_RED" />
+
     <TextView
         android:id="@+id/localChallengeElseHeader"
         android:layout_width="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="choose a place" />
-
-
-    
-    
+        android:visibility="gone"
+        android:text="city name" />
 
     <ListView
         android:id="@+id/semiLocalChallengeList"

@@ -20,15 +20,19 @@ public class CompetitorFragment extends SherlockFragment {
         mTabHost = new FragmentTabHost(getSherlockActivity());
  
         mTabHost.setup(getSherlockActivity(), getChildFragmentManager(),
-                R.layout.fragment_challenge);
+                R.layout.fragment_global_competitor);
  
         // Create Child Tab1
-        mTabHost.addTab(mTabHost.newTabSpec("global").setIndicator("Swipe Up/Down to vote!"),
+        mTabHost.addTab(mTabHost.newTabSpec("vote").setIndicator("Vote"),
                 GlobalCompetitorFragment.class, null);
  
         // Create Child Tab2
-        //mTabHost.addTab(mTabHost.newTabSpec("local").setIndicator("Local"),
-        //        LocalCompetitorFragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("history").setIndicator("History"),
+                VoteHistory.class, null);
+        
+        mTabHost.addTab(mTabHost.newTabSpec("top").setIndicator("Top"),
+                LeaderBoard.class, null);
+        
         return mTabHost;
     }
     

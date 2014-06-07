@@ -36,6 +36,8 @@ public class DBHelper {
 	public final static String localChallengeURL = serverRoot + "api/challenges/nearby";
 	public final static String createLocalChallengeURL = serverRoot + "api/challenges/";
 	public final static String personalPhotosURL = serverRoot + "api/users/me/photos";
+	public final static String topUsersURL = serverRoot + "api/users/top";
+	public final static String voteHistoryURL = serverRoot + "/api/users/me/voting_history?fb_access_token=";
 	public final static String randomImageFromChallengeURL_HEAD = serverRoot + "api/challenges/";
 	public final static String randomImageFromChallengeURL_TAIL = "/photos/random";
 	private static final String globalChallengesURL = serverRoot + "api/challenges/";
@@ -63,6 +65,32 @@ public class DBHelper {
 		}
 		Log.i("HTTP POST request response", response);
 		return response;
+	}
+	
+	public VoteWrapper [] getVoteHistory() {
+		VoteWrapper v [] = new VoteWrapper[6];
+		/*
+		try {
+			String response = getHttpRequest(DBHelper.voteHistoryURL);
+			JSONArray challengesJSON = new JSONObject(response).getJSONArray("challenges");
+			retChallenges = new Challenge[challengesJSON.length()];
+			for(int i = 0; i < challengesJSON.length() ; i++) {
+				JSONObject challengeJSON = challengesJSON.getJSONObject(i).getJSONObject("challenge");
+				int id = challengeJSON.getInt("id");
+				String title = challengeJSON.getString("title");
+				String desc = challengeJSON.getString("description");
+				retChallenges[i] = new Challenge(id, title, desc);
+			}
+		} catch (Exception e) {
+			Log.d("getGlobalChallenges", "HTTP Request failed:" + e.getMessage());
+		}
+		*/
+		
+		for (int i = 0; i < 6; i++) {
+			v[i] = new VoteWrapper(1, "up", "http://i.imgur.com/CtnhjDB.jpg", "wow such title");
+		}
+		
+		return v;
 	}
 	
 	private String getHttpRequest(String url, String ... params) throws ClientProtocolException, IOException {
@@ -372,5 +400,32 @@ public class DBHelper {
 			Log.d("getPersonalPhotos", "HTTP Request failed:" + e.getMessage());
 		}
 		return topPhotos;
+	}
+	
+	public TopixUser [] getTopUsers() {
+		TopixUser [] topUsers = null;
+		try {
+			String response = getHttpRequest(DBHelper.topUsersURL);
+			JSONObject responseJSON = null;
+			JSONArray usersArray = null;
+			try {
+				responseJSON = new JSONObject(response);
+				usersArray = responseJSON.getJSONArray("users");
+			} catch (JSONException e) {
+	        	Log.e("getLocalPhotos", "Malformed JSON response: " + e.getMessage());
+	        	return null;
+			}
+			topUsers = new TopixUser[usersArray.length()];
+			for (int i = 0; i < usersArray.length(); i++) {
+				JSONObject userJSON = usersArray.getJSONObject(i).getJSONObject("user");
+				int numLikes = userJSON.getInt("likes"); 
+				String userName = userJSON.getString("name");
+				topUsers[i] = new TopixUser(userName, numLikes); 
+				
+			}
+		} catch (Exception e) {
+			Log.d("getLocalPhotos", "HTTP Request failed:" + e.getMessage());
+		}
+		return topUsers;
 	}
 }

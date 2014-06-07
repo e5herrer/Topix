@@ -270,22 +270,37 @@ public class LocalChallengeFragment extends Fragment {
 
 	}
 	
-	private class SubmitLocalChallengeTask extends AsyncTask<String, String, String> {
-
+	private class SubmitLocalChallengeTask extends AsyncTask<String, Void, Void> {
+		private Exception e;
 		@Override
-		protected String doInBackground(String... params) {
+		protected Void doInBackground(String... params) {
 			String title = params[0];
 			String desc = params[1];
 			String longitude = params[2];
 			String latitude = params[3]; 
-			return db.submitLocalChallenge(title, desc, longitude, latitude);
+			try {
+				db.submitLocalChallenge(title, desc, longitude, latitude);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			if(this.e != null) {
+				Log.e("SubmitLocalChallengeTask", "Exception submitting local challenge", this.e);
+				return;
+			}
+			return;
 		}
 	}
 
 	private class GetLocalChallengeTask extends
 			AsyncTask<String, String, LocalChallengeWrapper> {
 
-		ListView listView;
+		private Exception e;
+		private ListView listView;
 
 		public GetLocalChallengeTask(ListView listView) {
 			this.listView = listView;
@@ -293,11 +308,20 @@ public class LocalChallengeFragment extends Fragment {
 
 		@Override
 		protected LocalChallengeWrapper doInBackground(String... params) {
-			return db.getNearbyChallenges(params[0], params[1]);
+			LocalChallengeWrapper nearbyChallenges = null;
+			try {
+				nearbyChallenges = db.getNearbyChallenges(params[0], params[1]);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return nearbyChallenges;
 		}
 
 		protected void onPostExecute(final LocalChallengeWrapper localWrapper) {
-			
+			if(this.e != null) {
+				Log.e("GetLocalChallengeTask", "Exception getting nearby challenges", this.e);
+				return;
+			}
 			final Challenge [] challenges = localWrapper.getMyChallenges();
 			
 			currentLocation.setText(localWrapper.getMyCity());

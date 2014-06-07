@@ -112,15 +112,25 @@ public class ProfileFragment extends SherlockFragment {
     
     
     private class RenderPersonalAlbum extends AsyncTask<String, String, TopixPhoto[]> {
-    	
+    	private Exception e;
     	//GridView gridProfile;
  
     	@Override
 		protected TopixPhoto[] doInBackground(String ...params) {
-    		return db.getPersonalPhotos(); 
+    		TopixPhoto[] personalPhotos = null;
+    		try {
+				personalPhotos = db.getPersonalPhotos();
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return personalPhotos; 
     	}
     	
     	protected void onPostExecute(final TopixPhoto [] result) {
+    		if(this.e != null ) {
+				Log.e("RenderPersonalAlbum", "Exception getting personalPhotos", this.e);
+				return;
+    		}
     		if(result == null || result.length == 0){
     			return;
     		}
@@ -154,20 +164,28 @@ public class ProfileFragment extends SherlockFragment {
     }   
     
     private class RenderChallengeTask extends AsyncTask<String, Void, Challenge> {		
-
+    	private Exception e;
         @Override
         protected Challenge doInBackground(String... urls) {
-        	return db.getLatestChallenge(urls);
+        	Challenge latestChallenge = null;
+        	try {
+				latestChallenge = db.getLatestChallenge(urls);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return latestChallenge;
         }
 
         @Override
         protected void onPostExecute(Challenge challenge) {
-        	if(challenge != null) { 
-        		RenderPersonalAlbum album = new RenderPersonalAlbum();
-                album.execute();
-             
+        	if(this.e != null) {
+        		return;
         	}
-        		
+        	if(challenge == null) {
+        		return;
+        	}
+        	RenderPersonalAlbum album = new RenderPersonalAlbum();
+        	album.execute();
         }
     } 
     

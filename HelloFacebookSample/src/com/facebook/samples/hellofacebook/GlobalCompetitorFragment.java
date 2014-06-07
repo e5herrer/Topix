@@ -81,7 +81,7 @@ public class GlobalCompetitorFragment extends SherlockFragment {
         return rootView;
     }
     
-    //Needed to impliment this on fragments because a context switch out of main activity caused a crach
+    //Needed to implement this on fragments because a context switch out of main activity caused a crash
     //more info here https://code.google.com/p/android/issues/detail?id=19211
     @Override 
     public void onSaveInstanceState(Bundle outState) 
@@ -127,14 +127,25 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     }
     
     private class RenderRandomImageTask extends AsyncTask<String, String, TopixPhoto> {
-
+    	private Exception e;
 		@Override
 		protected TopixPhoto doInBackground(String... params) {
-			return db.getRandomPhoto(todaysChallenge);
+			TopixPhoto randomPhoto = null;
+			try {
+				randomPhoto = db.getRandomPhoto(todaysChallenge);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return randomPhoto;
 		}
 		
 		@Override
 		protected void onPostExecute(TopixPhoto gotPhoto) {
+			if( this.e != null ) {
+				Log.e("RenderRandomImageTask", "Exception getting random image", this.e);
+				votedOnAllImages = true; 
+				iview.setImageResource(R.drawable.placeholder_voting_complete);
+			}
 			if (gotPhoto != null) { 
 				votedOnAllImages = false;
 				Log.d("randomPhoto", gotPhoto.getURL());
@@ -149,8 +160,8 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     }
     
     private class VoteTask extends AsyncTask<String, String, String> {
-    	
-    	int photoID;
+    	private Exception e;
+    	private int photoID;
     	
     	public VoteTask(int photoID){
     		this.photoID = photoID; 
@@ -158,21 +169,35 @@ public class GlobalCompetitorFragment extends SherlockFragment {
 
 		@Override
 		protected String doInBackground(String... params) {
-			db.pushVote(photoID, params[0]);
+			try {
+				db.pushVote(photoID, params[0]);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
 			return null;
 		}
     	
     }
     
     private class GetTodaysChallengeTask extends AsyncTask<String, String, Challenge> {
-    	
+    	private Exception e;
     	@Override
     	protected Challenge doInBackground(String ... params) {
-    		return db.getLatestChallenge();
+    		Challenge latestChallenge = null;
+    		try {
+				latestChallenge = db.getLatestChallenge();
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+    		return latestChallenge;
     	}
     	
     	@Override
     	protected void onPostExecute(Challenge result) {
+    		if(this.e != null) {
+				Log.e("GetTodaysChallengeTask", "Exception getting todays challenge", this.e);
+				return;
+    		}
     		todaysChallenge = result;
     		displayRandomImage();
     	}

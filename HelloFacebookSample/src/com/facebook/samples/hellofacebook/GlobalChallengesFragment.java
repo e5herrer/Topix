@@ -54,6 +54,7 @@ public class GlobalChallengesFragment extends Fragment {
 			AsyncTask<String, String, Challenge[]> {
 
 		ListView listView;
+		private Exception e;
 
 		public GetGlobalChallengesTask(ListView listView) {
 			this.listView = listView;
@@ -61,10 +62,20 @@ public class GlobalChallengesFragment extends Fragment {
 
 		@Override
 		protected Challenge[] doInBackground(String... params) {
-			return db.getGlobalChallenges();
+			Challenge[] global_challenges = null;
+			try {
+				global_challenges = db.getGlobalChallenges();
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return global_challenges;
 		}
 
 		protected void onPostExecute(final Challenge[] challenges) {
+			if (this.e != null) {
+				Log.e("GetGlobalChallengesTask", "Exception getting global challenges", this.e);
+				return;
+			}
 			GlobalChallengesAdapter adapter = new GlobalChallengesAdapter(
 					getActivity().getBaseContext(),
 					R.layout.challenge_list_item_row, challenges);

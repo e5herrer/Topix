@@ -49,13 +49,26 @@ public class LeaderBoard extends Fragment {
 
 	
 	private class GetTopDataTask extends AsyncTask<String, String, TopixUser []> {
-
+		private Exception e;
 		@Override
 		protected TopixUser[] doInBackground(String... params) {
-			return db.getTopUsers();
+			TopixUser[] topUsers = null;
+			try {
+				topUsers = db.getTopUsers();
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return topUsers;
 		}
 
 		protected void onPostExecute(final TopixUser[] topUsers) {
+			if(this.e != null) {
+				Log.e("getTopDataTask", "Exception getting top users", this.e);
+				return;
+			}
+			if(topUsers == null || topUsers.length == 0 ) {
+				return;
+			}
 			LeaderboardAdapter adapter = new LeaderboardAdapter(getActivity().getBaseContext(),R.layout.leaderboard_list_item_row, topUsers);
 			
 			listView.setAdapter(adapter);

@@ -128,13 +128,23 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 	
 
 	private class GetCityChallengeTask extends AsyncTask<String, String, Challenge[]> {
-
+		private Exception e;
 		@Override
 		protected Challenge[] doInBackground(String... params) {
-			return db.getUserSpecifiedChallenges(params[0], params[1], params[2]);
+			Challenge[] userSpecifiedChallenges = null;
+			try {
+				userSpecifiedChallenges = db.getUserSpecifiedChallenges(params[0], params[1], params[2]);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return userSpecifiedChallenges;
 		}
 
 		protected void onPostExecute(final Challenge[] challenges) {
+			if(this.e != null) {
+				Log.e("GetCityChallengeTask", "Exception getting challenges", this.e);
+				return;
+			}
 			LocalChallengeAdapter adapter = new LocalChallengeAdapter(getActivity().getBaseContext(), R.layout.challenge_list_item_row, challenges);
 			
 			listView.setAdapter(adapter);

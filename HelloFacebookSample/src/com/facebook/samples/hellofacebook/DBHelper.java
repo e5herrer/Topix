@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -44,30 +45,99 @@ public class DBHelper {
 	
 	private final static int numPhotos = 9;
 	
-	private String postHttpRequest(String url, JSONObject data) throws ClientProtocolException, IOException {
+	private String postHttpRequest(String url, JSONObject data) throws TopixServiceException {
 		DefaultHttpClient client = new DefaultHttpClient(); 
 		Log.i("HTTP POST request url", url);
 		Log.i("HTTP POST request body", data.toString());
 		HttpPost httpPost = new HttpPost(url); 
-		StringEntity se = new StringEntity(data.toString());  
+		StringEntity se = null;
+		try {
+			se = new StringEntity(data.toString());
+		} catch (UnsupportedEncodingException e1) {
+			throw new BadRequestException();
+		}  
 		se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 		httpPost.setEntity(se);
-		HttpResponse execute = client.execute(httpPost);
+		HttpResponse execute = null;
+		try {
+			execute = client.execute(httpPost);
+		} catch (ClientProtocolException e) {
+			int status_code = ((HttpResponseException) e).getStatusCode();
+			switch(status_code) {
+				case 401 : throw new UnauthorizedUserException();
+				case 422 : throw new BadRequestException();
+				case 500 : throw new ServiceUnavailableException();
+				case 503 : throw new ServiceUnavailableException();
+				default: throw new TopixServiceException();
+			}
+		} catch (IOException e) {
+			throw new ServiceUnavailableException();
+		}
 		if(null == execute) {
 			return null;
 		}
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(
-				execute.getEntity().getContent()));
-		String s = "";
 		String response = "";
-		while ((s = buffer.readLine()) != null) {
-			response += s;
+		try {
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(execute.getEntity().getContent()));
+			String s = "";
+			while ((s = buffer.readLine()) != null) {
+				response += s;
+			}
+		} catch(IOException e) {
+			throw new ServiceUnavailableException();
 		}
 		Log.i("HTTP POST request response", response);
 		return response;
 	}
 	
-	public VoteWrapper [] getVoteHistory() {
+	
+	private String getHttpRequest(String url, String ... params) throws TopixServiceException {
+		DefaultHttpClient client = new DefaultHttpClient();
+		String parameters = "";
+		if (params.length > 0) {
+			parameters = "?" + TextUtils.join("&", params);
+		}
+		Log.i("HTTP GET request url", url + parameters);
+		HttpGet httpGet = new HttpGet(url + parameters);
+		HttpResponse execute = null;
+		try {
+			execute = client.execute(httpGet);
+		} catch (ClientProtocolException e) {
+			int status_code = ((HttpResponseException) e).getStatusCode();
+			switch(status_code) {
+				case 401 : throw new UnauthorizedUserException();
+				case 422 : throw new BadRequestException();
+				case 500 : throw new ServiceUnavailableException();
+				case 503 : throw new ServiceUnavailableException();
+				default: throw new TopixServiceException();
+			}
+		} catch (IOException e) {
+			throw new ServiceUnavailableException();
+		}
+		if(null == execute) {
+			return null;
+		}
+		BufferedReader buffer;
+		try {
+			buffer = new BufferedReader(new InputStreamReader(
+					execute.getEntity().getContent()));
+		} catch (IOException e) {
+			throw new ServiceUnavailableException();
+		}
+		String s = "";
+		String response = "";
+		try {
+			while ((s = buffer.readLine()) != null) {
+				response += s;
+			}
+		} catch (IOException e) {
+			throw new ServiceUnavailableException();
+		}
+		Log.i("HTTP GET request response", response);
+		return response;
+	}
+	
+	public VoteWrapper [] getVoteHistory() throws TopixServiceException {
 		VoteWrapper retVotes [] = null;
 		
 		try {
@@ -91,6 +161,7 @@ public class DBHelper {
 				
 		} catch (Exception e) {
 			Log.d("getGlobalChallenges", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 
 		/*
@@ -101,29 +172,7 @@ public class DBHelper {
 		
 		return retVotes;
 	}
-	
-	private String getHttpRequest(String url, String ... params) throws ClientProtocolException, IOException {
-		DefaultHttpClient client = new DefaultHttpClient();
-		String parameters = "";
-		if (params.length > 0) {
-			parameters = "?" + TextUtils.join("&", params);
-		}
-		Log.i("HTTP GET request url", url + parameters);
-		HttpGet httpGet = new HttpGet(url + parameters);
-		HttpResponse execute = client.execute(httpGet);
-		if(null == execute) {
-			return null;
-		}
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(
-				execute.getEntity().getContent()));
-		String s = "";
-		String response = "";
-		while ((s = buffer.readLine()) != null) {
-			response += s;
-		}
-		Log.i("HTTP GET request response", response);
-		return response;
-	}
+
 	/*
 	 * { "photo": { "image_content_type":"image/jpg",
 	 * "image_file_name":"test.jpg", "image_data":"BASE64STR", "caption":"   " }
@@ -140,7 +189,7 @@ public class DBHelper {
 		  }
 		}
 	*/
-	public String submitLocalChallenge(String title, String desc, String longitude, String latitude) { 
+	public void submitLocalChallenge(String title, String desc, String longitude, String latitude) throws TopixServiceException { 
 		JSONObject outerJSON = new JSONObject(); 
 		JSONObject innerJSON = new JSONObject(); 
 		try {
@@ -158,13 +207,12 @@ public class DBHelper {
 			postHttpRequest(createLocalChallengeURL, outerJSON);
         } catch (Exception e) {
         	Log.e("submitLocalChallenge", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
         }
-		
-		return null;
 	}
 	
 	
-	public Challenge [] getGlobalChallenges() {
+	public Challenge [] getGlobalChallenges() throws TopixServiceException {
 		Challenge [] retChallenges = null;
 		try {
 			String response = getHttpRequest(DBHelper.globalChallengesURL);
@@ -179,12 +227,13 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getGlobalChallenges", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		
 		return retChallenges;
 	}
 
-	public LocalChallengeWrapper getNearbyChallenges(String longitude, String latitude) {
+	public LocalChallengeWrapper getNearbyChallenges(String longitude, String latitude) throws TopixServiceException {
 		LocalChallengeWrapper retChallengeWrapper = null;
 		try {
 			String response = getHttpRequest(DBHelper.localChallengeURL, "latitude=" + latitude, "longitude=" + longitude);
@@ -203,12 +252,13 @@ public class DBHelper {
 			retChallengeWrapper = new LocalChallengeWrapper(retChallenges, userCity);
 		} catch (Exception e) {
 			Log.d("getLocalChallenge", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		
 		return retChallengeWrapper;
 	}
 	
-	public Challenge [] getUserSpecifiedChallenges(String cityName, String stateName, String countryName) {
+	public Challenge [] getUserSpecifiedChallenges(String cityName, String stateName, String countryName) throws TopixServiceException {
 		Challenge [] retChallenges = null;
 		//String countrymerged = 
 		try {
@@ -231,12 +281,13 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getLocalChallenge", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		
 		return retChallenges;
 	}
 	
-	public void pushVote(int photoID, String voteResult ) {
+	public void pushVote(int photoID, String voteResult ) throws TopixServiceException {
 		JSONObject outerJSON = new JSONObject();
 		JSONObject innerJSON = new JSONObject();
 		try {
@@ -252,10 +303,11 @@ public class DBHelper {
 			postHttpRequest(DBHelper.baseVoteURL + photoID + "/vote", outerJSON);
 		} catch (Exception e) {
 			Log.d("pushVote", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 	}
 
-	public void pushPhoto(Challenge c, String encodedImage) {
+	public void pushPhoto(Challenge c, String encodedImage) throws TopixServiceException {
         JSONObject outerJSON = new JSONObject(); 
         JSONObject innerJSON = new JSONObject(); 
         try {
@@ -273,10 +325,11 @@ public class DBHelper {
         	postHttpRequest(DBHelper.topPhotoBaseURL + c.getId() + "/photos", outerJSON);
         } catch (Exception e) {
 			Log.d("pushPhoto", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
         }
 	}
 
-	public TopixPhoto[] getTopPhotos(Challenge topChallenge, String... params) {
+	public TopixPhoto[] getTopPhotos(Challenge topChallenge, String... params) throws TopixServiceException {
 		TopixPhoto [] topPhotos = null;
 		try {
 			String response = getHttpRequest(DBHelper.topPhotoBaseURL + topChallenge.getId() + "/photos/top","number=" + numPhotos);
@@ -299,11 +352,12 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getTopPhotos", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return topPhotos;
 	}
 	
-	public TopixPhoto getRandomPhoto(Challenge todaysChallenge) {
+	public TopixPhoto getRandomPhoto(Challenge todaysChallenge) throws TopixServiceException {
 		TopixPhoto randomPhoto = null;
 		try {
 			String url = DBHelper.randomImageFromChallengeURL_HEAD + todaysChallenge.getId();
@@ -322,12 +376,13 @@ public class DBHelper {
 			randomPhoto = new TopixPhoto(responseJSON.getInt("id"), responseJSON.getString("image"));
 		} catch (Exception e) {
 			Log.d("getRandomPhoto", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return randomPhoto;
 
 	}
 
-	public TopixPhoto[] getLocalPhotos(Challenge c, String... params) {
+	public TopixPhoto[] getLocalPhotos(Challenge c, String... params) throws TopixServiceException {
 		TopixPhoto [] topPhotos = null;
 		try {
 			String response = getHttpRequest(DBHelper.topPhotoBaseURL + c.getId() + "/photos");
@@ -350,11 +405,12 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getLocalPhotos", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return topPhotos;
 	}
 	
-	public Challenge getLatestChallenge(String... urls) {
+	public Challenge getLatestChallenge(String... urls) throws TopixServiceException {
 		Challenge challenge = null;
 		try {
 			String response = getHttpRequest(DBHelper.latestChallengeURLString);
@@ -373,12 +429,13 @@ public class DBHelper {
 			challenge = new Challenge(id, title, description);
 		} catch (Exception e) {
 			Log.d("getLatestChallenge", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return challenge;
 	}
 
 	
-	public TopixPhoto[] getPersonalPhotos() {
+	public TopixPhoto[] getPersonalPhotos() throws TopixServiceException {
 		TopixPhoto [] topPhotos = null;
 		try {
 			String fb_access_token = Session.getActiveSession().getAccessToken();
@@ -407,11 +464,12 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getPersonalPhotos", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return topPhotos;
 	}
 	
-	public TopixUser [] getTopUsers() {
+	public TopixUser [] getTopUsers() throws TopixServiceException {
 		TopixUser [] topUsers = null;
 		try {
 			String response = getHttpRequest(DBHelper.topUsersURL);
@@ -434,6 +492,7 @@ public class DBHelper {
 			}
 		} catch (Exception e) {
 			Log.d("getLocalPhotos", "HTTP Request failed:" + e.getMessage());
+			throw new TopixServiceException();
 		}
 		return topUsers;
 	}

@@ -197,7 +197,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
     
     
-    //Needed to impliment this on fragments because a context switch out of main activity caused a crach
+    //Needed to implement this on fragments because a context switch out of main activity caused a crash
     //more info here https://code.google.com/p/android/issues/detail?id=19211
     @Override 
     	public void onSaveInstanceState(Bundle outState) {
@@ -206,36 +206,54 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	super.onSaveInstanceState(outState);
     }
     
-    private class UploadPhotoTask extends AsyncTask<String, String, String> {
-
+    private class UploadPhotoTask extends AsyncTask<String, Void, Void> {
+    	private Exception e;
 		@Override
-		protected String doInBackground(String... params) {
-			Log.d("GlobalChallengeFrag", "pushing photo to " + todaysChallenge.getDescription());
-			db.pushPhoto(todaysChallenge, params[0]);
+		protected Void doInBackground(String... params) {
+			try {
+				db.pushPhoto(todaysChallenge, params[0]);				
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
 			return null;
 		}
 		
-		protected void onPostExecute(String result) {
-			GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, todaysChallenge);
-    	    getTopPhotosTask.execute();
+		protected void onPostExecute(Void result) {
+			if(this.e == null) {
+				GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, todaysChallenge);
+				getTopPhotosTask.execute();
+			} else {
+				Log.e("UploadPhotoTask", "Exception uploading photo", this.e);
+			}
 		}
 		
     }
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
-    	GridView g;
-    	Challenge c;
+    	private Exception e;
+    	private GridView g;
+    	private Challenge c;
     	GetTopPhotosTask(GridView g, Challenge c) {
     		this.g = g;
     		this.c = c;
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getTopPhotos(c, params); 
+    		TopixPhoto[] topPhotos = null;
+    		try {
+				topPhotos = db.getTopPhotos(c, params);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+    		return topPhotos;
     	}
     	
     	@Override
 		protected void onPostExecute(final TopixPhoto [] result) {
+    		if(this.e != null){
+				Log.e("GetTopPhotos", "Exception getting top photos", this.e);
+    			return;
+    		}
     		if(result == null){
     			return;
     		}
@@ -262,24 +280,36 @@ public class GlobalChallengeFragment extends SherlockFragment {
     
     
     private class RenderChallengeTask extends AsyncTask<String, Void, Challenge> {		
-
+    	private Exception e;
+    	
         @Override
         protected Challenge doInBackground(String... urls) {
-        	return db.getLatestChallenge(urls);
+        	Challenge latest_challenge = null;
+        	try {
+        		latest_challenge = db.getLatestChallenge(urls);
+        	} catch (TopixServiceException e) {
+				Log.e("GetLatestChallenge", "Exception getting latest challenge", this.e);
+        	}
+        	return latest_challenge;
         }
 
         @Override
         protected void onPostExecute(Challenge challenge) {
-        	if(challenge != null) { 
-	        	
-        		titleText.setText(challenge.getTitle().toLowerCase()); 
-	        	
-	        	todaysChallenge = challenge; 
-	        	
-	        	GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, challenge);
-	    	    getTopPhotosTask.execute();
+        	if(this.e != null){
+        		Log.e("GetTopPhotos", "Exception getting top photos", this.e);
+        		return;
         	}
-        		
+        	if(challenge == null) {
+        		return;
+        	}
+
+        	titleText.setText(challenge.getTitle().toLowerCase()); 
+
+        	todaysChallenge = challenge; 
+
+        	GetTopPhotosTask getTopPhotosTask = new GetTopPhotosTask(gridview, challenge);
+        	getTopPhotosTask.execute();
+
         }
     } 
     

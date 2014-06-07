@@ -48,13 +48,22 @@ public class VoteHistory extends Fragment {
 
 	
 	private class VoteHistoryTask extends AsyncTask<String, String, VoteWrapper []> {
-
+		private Exception e;
 		@Override
 		protected VoteWrapper [] doInBackground(String... params) {
-			return db.getVoteHistory();
+			VoteWrapper[] voteHistory = null;
+			try {
+				voteHistory = db.getVoteHistory();
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return voteHistory;
 		}
 
 		protected void onPostExecute(final VoteWrapper[] votes) {
+			if(this.e != null) {
+				return;
+			}
 			VoteHistoryAdapter adapter = new VoteHistoryAdapter(getActivity().getBaseContext(), R.layout.vote_history_list_row, votes);
 			
 			listView.setAdapter(adapter);

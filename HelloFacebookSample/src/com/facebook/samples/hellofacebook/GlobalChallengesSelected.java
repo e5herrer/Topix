@@ -112,19 +112,30 @@ public class GlobalChallengesSelected extends Activity {
     
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
-    	GridView g;
-    	Challenge c;
+    	private Exception e;
+    	private GridView g;
+    	private Challenge c;
     	GetTopPhotosTask(GridView g, Challenge c) {
     		this.g = g;
     		this.c = c;
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getTopPhotos(c, params); 
+    		TopixPhoto[] topPhotos = null;
+    		try {
+				topPhotos = db.getTopPhotos(c, params);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+    		return topPhotos;
     	}
     	
     	@Override
 		protected void onPostExecute(final TopixPhoto [] result) {
+    		if(this.e != null){
+				Log.e("GetTopPhotosTask", "Exception getting topPhotos", this.e);
+				return;
+    		}
     		if(result == null){
     			return;
     		}

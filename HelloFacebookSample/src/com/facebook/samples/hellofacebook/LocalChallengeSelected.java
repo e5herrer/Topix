@@ -210,37 +210,59 @@ public class LocalChallengeSelected extends Activity {
     	super.onSaveInstanceState(outState);
     }
     
-    private class UploadPhotoTask extends AsyncTask<String, String, String> {
-    	
-    	Challenge c; 
+    private class UploadPhotoTask extends AsyncTask<String, Void, Void> {
+    	private Exception e;
+    	private Challenge c; 
     	
     	public UploadPhotoTask(Challenge c) { 
     		this.c = c; 
     	}
 
 		@Override
-		protected String doInBackground(String... params) {
-			db.pushPhoto(c, params[0]);
+		protected Void doInBackground(String... params) {
+			try {
+				db.pushPhoto(c, params[0]);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
 			return null;
 		}
-		
+		@Override
+		protected void onPostExecute(Void result) {
+			if(this.e != null) {
+				Log.e("UploadPhotoTask", "Exception uploading photo", this.e);
+				return;
+			}
+			return;
+		}
     }
     
     private class GetTopPhotosTask extends AsyncTask<String, String, TopixPhoto []> {
-    	GridView g;
-    	Challenge c;
+    	private Exception e;
+    	private GridView g;
+    	private Challenge c;
     	GetTopPhotosTask(GridView g, Challenge c) {
     		this.g = g;
     		this.c = c;
     	}
     	@Override
 		protected TopixPhoto [] doInBackground(String ...params) {
-    		return db.getTopPhotos(c, params); 
+    		TopixPhoto[] topPhotos = null;
+    		try {
+				topPhotos = db.getTopPhotos(c, params);
+			} catch (TopixServiceException e) {
+				this.e = e;
+			}
+			return topPhotos; 
     	}
     	
     	@Override
 		protected void onPostExecute(final TopixPhoto [] result) {
-    		if(result == null){
+    		if(this.e != null) {
+				Log.e("getTopPhotosTask", "Exception getting topPhotos", this.e);
+				return;
+    		}
+    		if(result == null || result.length == 0){
     			return;
     		}
     		final TopPhotoAdapter gridadapter = new TopPhotoAdapter(getBaseContext(), result); //same need to call on rootview for context

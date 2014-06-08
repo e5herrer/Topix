@@ -122,7 +122,6 @@ public class GlobalChallengeFragment extends SherlockFragment {
    @Override
    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	   super.onActivityResult(requestCode, resultCode, data);
-	   Toast.makeText(this.getActivity(), "On Activity Result", Toast.LENGTH_LONG).show();
 	  
 	  if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
 		//getActivity();
@@ -224,6 +223,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
 				getTopPhotosTask.execute();
 			} else {
 				Log.e("UploadPhotoTask", "Exception uploading photo", this.e);
+				Toast.makeText(getActivity(), "Photo wasn't uploaded", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -252,6 +252,9 @@ public class GlobalChallengeFragment extends SherlockFragment {
 		protected void onPostExecute(final TopixPhoto [] result) {
     		if(this.e != null){
 				Log.e("GetTopPhotos", "Exception getting top photos", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't retrieve top photos", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
     			return;
     		}
     		if(result == null){
@@ -295,9 +298,15 @@ public class GlobalChallengeFragment extends SherlockFragment {
 
         @Override
         protected void onPostExecute(Challenge challenge) {
+			if (!GlobalChallengeFragment.this.isAdded()) {
+				return;
+			}
         	if(this.e != null){
-        		Log.e("GetTopPhotos", "Exception getting top photos", this.e);
-        		return;
+        		Log.e("GetTopPhotos", "Exception getting latest challenge", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't retrieve latest challenge", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
+    			return;
         	}
         	if(challenge == null) {
         		return;

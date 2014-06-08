@@ -61,6 +61,13 @@ public class DBHelper {
 		HttpResponse execute = null;
 		try {
 			execute = client.execute(httpPost);
+			int statusCode = execute.getStatusLine().getStatusCode();
+			if(statusCode < 200 || statusCode >= 300) {
+				if(statusCode == 500 || statusCode == 503) {
+					throw new ServiceUnavailableException();
+				}
+				throw new TopixServiceException();
+			}
 		} catch (ClientProtocolException e) {
 			int status_code = ((HttpResponseException) e).getStatusCode();
 			switch(status_code) {
@@ -72,6 +79,8 @@ public class DBHelper {
 			}
 		} catch (IOException e) {
 			throw new ServiceUnavailableException();
+		} catch (TopixServiceException e) {
+			throw e;
 		}
 		if(null == execute) {
 			return null;
@@ -102,17 +111,24 @@ public class DBHelper {
 		HttpResponse execute = null;
 		try {
 			execute = client.execute(httpGet);
+			int statusCode = execute.getStatusLine().getStatusCode();
+			if(statusCode < 200 || statusCode >= 300) {
+				if(statusCode == 500 || statusCode == 503) {
+					throw new ServiceUnavailableException();
+				}
+				throw new TopixServiceException();
+			}
 		} catch (ClientProtocolException e) {
 			int status_code = ((HttpResponseException) e).getStatusCode();
 			switch(status_code) {
 				case 401 : throw new UnauthorizedUserException();
 				case 422 : throw new BadRequestException();
-				case 500 : throw new ServiceUnavailableException();
-				case 503 : throw new ServiceUnavailableException();
 				default: throw new TopixServiceException();
 			}
 		} catch (IOException e) {
 			throw new ServiceUnavailableException();
+		}  catch (TopixServiceException e) {
+			throw e;
 		}
 		if(null == execute) {
 			return null;

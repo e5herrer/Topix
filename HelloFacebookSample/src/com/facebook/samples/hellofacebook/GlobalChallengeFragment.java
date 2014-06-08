@@ -81,7 +81,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        File file = getOutputPhotoFile();
     	        fileUri = Uri.fromFile(getOutputPhotoFile());
     	        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-    	       // i.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); 
+    	        i.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); 
     	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });

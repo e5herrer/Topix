@@ -194,8 +194,14 @@ public class GlobalCompetitorFragment extends SherlockFragment {
     	
     	@Override
     	protected void onPostExecute(Challenge result) {
+			if (!GlobalCompetitorFragment.this.isAdded()) {
+				return;
+			}
     		if(this.e != null) {
 				Log.e("GetTodaysChallengeTask", "Exception getting todays challenge", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't retrieve today's challenge", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
 				return;
     		}
     		todaysChallenge = result;

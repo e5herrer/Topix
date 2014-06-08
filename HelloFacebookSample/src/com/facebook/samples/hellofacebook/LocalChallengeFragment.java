@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LocalChallengeFragment extends Fragment {
 
@@ -216,7 +217,10 @@ public class LocalChallengeFragment extends Fragment {
 
 			//editLocation.setText("");
 			
-			
+			if (!LocalChallengeFragment.this.isAdded()) {
+				return;
+			}
+
 			GetLocalChallengeTask t = new GetLocalChallengeTask(listView);
 			t.execute("" + loc.getLongitude(), "" + loc.getLatitude());
 
@@ -290,6 +294,9 @@ public class LocalChallengeFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			if(this.e != null) {
 				Log.e("SubmitLocalChallengeTask", "Exception submitting local challenge", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't submit local challenge", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
 				return;
 			}
 			return;
@@ -320,6 +327,10 @@ public class LocalChallengeFragment extends Fragment {
 		protected void onPostExecute(final LocalChallengeWrapper localWrapper) {
 			if(this.e != null) {
 				Log.e("GetLocalChallengeTask", "Exception getting nearby challenges", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't retrieve nearby challenges", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
+
 				return;
 			}
 			final Challenge [] challenges = localWrapper.getMyChallenges();

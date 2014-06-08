@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -31,6 +30,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LocalChallengeFragmentElsewhere extends Fragment {
 
@@ -143,6 +143,9 @@ public class LocalChallengeFragmentElsewhere extends Fragment {
 		protected void onPostExecute(final Challenge[] challenges) {
 			if(this.e != null) {
 				Log.e("GetCityChallengeTask", "Exception getting challenges", this.e);
+				Toast errorToast = Toast.makeText(getActivity(), "Couldn't retrieve challenges", Toast.LENGTH_LONG);
+				errorToast.setDuration(2);
+				errorToast.show();
 				return;
 			}
 			LocalChallengeAdapter adapter = new LocalChallengeAdapter(getActivity().getBaseContext(), R.layout.challenge_list_item_row, challenges);

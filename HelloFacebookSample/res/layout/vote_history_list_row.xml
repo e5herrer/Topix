@@ -3,6 +3,27 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
+    
+    <ImageView
+	    android:id="@+id/thumbVoteImg"
+	    android:layout_width="50dp"
+	    android:layout_height="50dp"
+	    android:layout_gravity="right"
+	    android:background="@drawable/shape"
+	    android:paddingLeft="10dp"
+	    android:paddingTop="10dp"
+	    android:singleLine="true" />
+  
+    <ImageView
+	    android:id="@+id/thumbImg"
+	    android:layout_width="50dp"
+	    android:layout_height="50dp"
+	    android:layout_gravity="right"
+	    android:background="@drawable/shape"
+	    android:paddingLeft="10dp"
+	    android:paddingTop="10dp"
+	    android:singleLine="true" />
+
 	<TextView
 	    android:id="@+id/thumbTitle"
 	    android:layout_width="wrap_content"
@@ -17,15 +38,5 @@
 	    android:textSize="16sp" >
 
     </TextView>
-
-	<ImageView
-	    android:id="@+id/thumbImg"
-	    android:layout_width="50dp"
-	    android:layout_height="50dp"
-	    android:layout_gravity="right"
-	    android:background="@drawable/shape"
-	    android:paddingLeft="10dp"
-	    android:paddingTop="10dp"
-	    android:singleLine="true" />
 
 </LinearLayout>

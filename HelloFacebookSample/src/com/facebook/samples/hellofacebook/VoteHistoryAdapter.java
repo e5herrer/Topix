@@ -33,8 +33,16 @@ public class VoteHistoryAdapter extends ArrayAdapter<VoteWrapper> {
             
 	    TextView textView = (TextView) row.findViewById(R.id.thumbTitle);
 	    
-	    textView.setText(votes[position].getChallengeTitle() + "\t" + votes[position].getVote());
+	    textView.setText(votes[position].getChallengeTitle());
 	    //textView.setText("test topic title");
+	    
+	    ImageView voteImg = (ImageView) row.findViewById(R.id.thumbVoteImg);
+	    
+	    if(votes[position].getVote().equals("likes")) {
+	    	voteImg.setImageResource(R.drawable.upvote);
+	    } else {
+	    	voteImg.setImageResource(R.drawable.downvote);
+	    }
 	    
 	    ImageView iview = (ImageView) row.findViewById(R.id.thumbImg);
 	    

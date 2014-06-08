@@ -213,7 +213,7 @@ public class DBHelper {
 			innerJSON.put("description", desc);
 			innerJSON.put("longitude", longitude);
 			innerJSON.put("latitude", latitude); 
-			innerJSON.put("type", "local");
+			innerJSON.put("challenge_type", "local");
 			outerJSON.put("challenge", innerJSON);
 		} catch (JSONException e1) {
         	Log.e("submitLocalChallenge", "Malformed JSON");

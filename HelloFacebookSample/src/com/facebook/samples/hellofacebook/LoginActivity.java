@@ -1,6 +1,7 @@
 
 package com.facebook.samples.hellofacebook;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,6 +43,7 @@ public class LoginActivity extends FragmentActivity {
     private GraphPlace place;
     private List<GraphUser> tags;
     private boolean canPresentShareDialog;
+    private ActionBar actionBar;
     private boolean canPresentShareDialogWithPhotos;
 
     private enum PendingAction {
@@ -135,6 +137,8 @@ public class LoginActivity extends FragmentActivity {
         Log.d("here6", "6");
         // END HERE
         
+       actionBar = getActionBar();
+       actionBar.hide();
        
         myLoginButton = (LoginButton) findViewById(R.id.login_button);
 

@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -158,6 +159,11 @@ public class LocalChallengeSelected extends Activity {
 		        File imageFile = new File(filepath);
 		       
 		        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+		        if (bitmap.getWidth() > bitmap.getHeight()) {
+		            Matrix matrix = new Matrix();
+		            matrix.postRotate(90);
+		            bitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		        }
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
 		        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 		        byte[] byteArray = byteArrayOutputStream .toByteArray();

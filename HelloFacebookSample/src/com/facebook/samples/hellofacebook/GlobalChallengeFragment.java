@@ -8,8 +8,10 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -79,6 +81,7 @@ public class GlobalChallengeFragment extends SherlockFragment {
     	        File file = getOutputPhotoFile();
     	        fileUri = Uri.fromFile(getOutputPhotoFile());
     	        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+    	        i.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); 
     	        getParentFragment().startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ );
             }
         });
@@ -168,6 +171,12 @@ public class GlobalChallengeFragment extends SherlockFragment {
 	        File imageFile = new File(filepath);
 	       
 	        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+	        if (bitmap.getWidth() > bitmap.getHeight()) {
+	            Matrix matrix = new Matrix();
+	            matrix.postRotate(90);
+	            bitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	        }
+
 	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
 	        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 	        byte[] byteArray = byteArrayOutputStream .toByteArray();

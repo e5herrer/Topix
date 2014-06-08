@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#009999"
  
     android:orientation="vertical" >
 
@@ -26,7 +25,6 @@
             android:layout_weight="0.22"
             android:fontFamily="sans-serif-condensed"
             android:gravity="center_horizontal"
-            android:text="TextView"
             android:textColor="#FFFFFF"
             android:textSize="36sp" />
 
@@ -39,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout1_local"
         android:orientation="vertical" >
 
         <com.facebook.samples.hellofacebook.FButton
@@ -48,7 +47,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_weight="0.27"
+            android:layout_marginTop="10dp"
             android:text="TAKE PHOTO"
             fbutton:buttonColor="@color/TOPIX_RED" />
 
@@ -57,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.27"
+            android:layout_weight="0.03"
             android:text="TRENDING" />
 
         <GridView
@@ -65,12 +64,14 @@
             android:layout_width="match_parent"
             android:layout_height="208dp"
             android:layout_marginBottom="10dp"
+            android:layout_weight="0.16"
             android:columnWidth="80dp"
             android:gravity="center"
             android:horizontalSpacing="1dp"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" >
+
         </GridView>
 
     </LinearLayout>

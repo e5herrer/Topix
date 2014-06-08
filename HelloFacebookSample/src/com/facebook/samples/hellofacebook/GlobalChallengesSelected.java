@@ -64,7 +64,7 @@ public class GlobalChallengesSelected extends Activity {
         Intent i = getIntent(); 
         
         myLocalChallenge = (Challenge) i.getSerializableExtra("challenge"); 
-        challengeText.setText(myLocalChallenge.getTitle() + myLocalChallenge.getDescription());
+        challengeText.setText(myLocalChallenge.getTitle());
         
         //initialize top photos
         gridview = (GridView) findViewById(R.id.top_photos_gridview_challenges); //almost like original code but since its a fragment need to call on the rooview 

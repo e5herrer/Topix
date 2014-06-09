@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -60,6 +61,8 @@ public class GlobalChallengesSelected extends Activity {
         challengeText = (TextView)findViewById(R.id.challengeHolder_challenges);
         
         //db.getLatestChallenge(challengeText);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Pacifico.ttf");
+        challengeText.setTypeface(tf);
         
         Intent i = getIntent(); 
         

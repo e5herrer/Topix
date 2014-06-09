@@ -8,6 +8,9 @@
  
     android:orientation="vertical" >
 
+    
+
+    
     <LinearLayout
         android:id="@+id/linearLayout1_local"
         android:layout_width="wrap_content"
@@ -23,7 +26,7 @@
             android:layout_height="fill_parent"
             android:layout_marginTop="10dp"
             android:layout_weight="0.22"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="pacifico"
             android:gravity="center_horizontal"
             android:textColor="#FFFFFF"
             android:textSize="36sp" />

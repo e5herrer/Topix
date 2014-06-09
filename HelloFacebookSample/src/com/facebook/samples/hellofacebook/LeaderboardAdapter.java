@@ -31,7 +31,7 @@ public class LeaderboardAdapter extends ArrayAdapter<TopixUser> {
 	    TextView txtUserName = (TextView) row.findViewById(R.id.lbUserName);
 	    TextView txtUserVotes = (TextView) row.findViewById(R.id.lbUserVotes);
 	    
-	    txtUserName.setText(users[position].getNumLikes() + "                      " + users[position].getUserName());
+	    txtUserName.setText("   " + users[position].getNumLikes() + "                      " + users[position].getUserName());
 	    //txtUserVotes.setText(users[position].getNumLikes());
         
         return row;

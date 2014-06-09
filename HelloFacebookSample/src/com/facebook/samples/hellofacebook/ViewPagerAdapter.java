@@ -52,11 +52,6 @@ public class ViewPagerAdapter extends PagerAdapter {
         View itemView = inflater.inflate(R.layout.viewpager_item, container,
                 false);
  
-        // Locate the TextViews in viewpager_item.xml
-        txtrank = (TextView) itemView.findViewById(R.id.rank);
- 
-        // Capture position and set to the TextViews
-        txtrank.setText(rank[position]);
  
         // Locate the ImageView in viewpager_item.xml
         imgflag = (ImageView) itemView.findViewById(R.id.flag);

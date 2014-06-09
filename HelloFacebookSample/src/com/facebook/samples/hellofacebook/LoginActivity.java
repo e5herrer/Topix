@@ -115,9 +115,9 @@ public class LoginActivity extends FragmentActivity {
         					  "Phasellus at arcu id nulla porta feugiat cursus non nisi.",
         					  "In commodo condimentum ante eget auctor." };
  
-        flag = new int[] { R.drawable.china, R.drawable.india,
-                R.drawable.unitedstates, R.drawable.indonesia,
-                R.drawable.brazil };
+        flag = new int[] { R.drawable.iconpage3, R.drawable.tutorial1,
+                R.drawable.tutorial2, R.drawable.tutorial3,
+                R.drawable.tutorial4};
  
         // Locate the ViewPager in viewpager_main.xml
         Log.d("here1", "1");

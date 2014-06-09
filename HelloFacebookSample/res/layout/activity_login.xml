@@ -13,12 +13,11 @@
         android:layout_weight="0.95" />
 
 	<com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/indicator"
-        android:layout_width="fill_parent"
-        android:padding="10dp"
-        android:paddingBottom="10dp"
-        android:layout_height="10dp"
-        android:layout_weight="0.02"  />
+	    android:id="@+id/indicator"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:padding="10dp"
+	    android:paddingBottom="10dp" />
 
     <com.facebook.widget.LoginButton
         android:id="@+id/myLoginButton"
@@ -26,9 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:paddingTop="20dp"
-        android:layout_weight="0.03"
         android:padding="10dp"
+        android:paddingTop="20dp"
         facebook:confirm_logout="false"
         facebook:fetch_user_info="true" />
 
@@ -43,15 +41,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:editable="true"
-            android:paddingTop="30dp"
+            android:paddingTop="10dp"
             android:text="hello"
             android:textSize="20sp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="9dp"
         android:orientation="vertical" >
+
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
